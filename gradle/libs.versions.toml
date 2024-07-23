@@ -6,7 +6,7 @@ firebaseBom = "33.1.2"
 firebaseFirestore = "25.0.0"
 hiltAndroidVersion = "2.49"
 hiltNavigationCompose = "1.2.0"
-kotlin = "1.9.0"
+kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -56,4 +56,4 @@ ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", versio
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
