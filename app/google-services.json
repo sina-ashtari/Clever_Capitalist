@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "903785869074",
+    "project_id": "clever-capitalist-fcd4b",
+    "storage_bucket": "clever-capitalist-fcd4b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903785869074:android:08cd7d3c138d1922204dcb",
+        "android_client_info": {
+          "package_name": "xyz.sina.clevercapitalist"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxB0bQnwYj_tLFLPS7GPlTZR9VgNlJwOE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
