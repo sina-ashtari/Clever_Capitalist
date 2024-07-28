@@ -12,8 +12,8 @@ import androidx.navigation.compose.composable
 import dagger.hilt.android.AndroidEntryPoint
 import xyz.sina.clevercapitalist.view.MainView
 import xyz.sina.clevercapitalist.view.Routes
-import xyz.sina.clevercapitalist.view.SignInView
-import xyz.sina.clevercapitalist.view.SignUpView
+import xyz.sina.clevercapitalist.view.authenticationView.SignInView
+import xyz.sina.clevercapitalist.view.authenticationView.SignUpView
 import xyz.sina.clevercapitalist.ui.theme.CleverCapitalistTheme
 
 
