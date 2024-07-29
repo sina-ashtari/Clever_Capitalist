@@ -1,4 +1,4 @@
-package xyz.sina.clevercapitalist.viewModel
+package xyz.sina.clevercapitalist.viewModel.authentication
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

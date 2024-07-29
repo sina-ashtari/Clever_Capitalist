@@ -1,6 +1,5 @@
-package xyz.sina.clevercapitalist.viewModel
+package xyz.sina.clevercapitalist.viewModel.authentication
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
