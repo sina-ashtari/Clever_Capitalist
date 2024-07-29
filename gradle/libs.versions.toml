@@ -4,6 +4,7 @@ converterGson = "2.9.0"
 firebaseAuth = "23.0.0"
 firebaseBom = "33.1.2"
 firebaseFirestore = "25.0.0"
+firebaseFirestoreKtx = "25.0.0"
 hiltAndroidVersion = "2.49"
 hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
@@ -42,6 +43,7 @@ firebase-auth = { module = "com.google.firebase:firebase-auth", version.ref = "f
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestore" }
 
+firebase-firestore-ktx = { module = "com.google.firebase:firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidVersion" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hiltAndroidVersion" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltAndroidVersion" }
