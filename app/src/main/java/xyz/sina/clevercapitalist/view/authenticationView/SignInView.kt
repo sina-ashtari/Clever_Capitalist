@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import xyz.sina.clevercapitalist.viewModel.SignInViewModel
+import xyz.sina.clevercapitalist.viewModel.authentication.SignInViewModel
 
 @Composable
 fun SignInView(navController: NavHostController) {

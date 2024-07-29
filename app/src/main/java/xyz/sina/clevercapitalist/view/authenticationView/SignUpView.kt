@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
-import xyz.sina.clevercapitalist.viewModel.SignUpViewModel
+import xyz.sina.clevercapitalist.view.Routes
+import xyz.sina.clevercapitalist.viewModel.authentication.SignUpViewModel
 
 @Composable
 fun SignUpView(navController: NavHostController) {
@@ -70,6 +71,7 @@ fun SignUpView(navController: NavHostController) {
                 when{
                     result.isSuccess -> {
                         scope.launch { snackBarHostState.showSnackbar("worked") }
+                        navController.navigate(Routes.REGISTER_FORM)
                     }
                     result.isFailure ->{
                         scope.launch { snackBarHostState.showSnackbar("try again") }
