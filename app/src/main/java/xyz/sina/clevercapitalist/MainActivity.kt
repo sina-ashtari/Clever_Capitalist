@@ -15,6 +15,7 @@ import xyz.sina.clevercapitalist.view.Routes
 import xyz.sina.clevercapitalist.view.authenticationView.SignInView
 import xyz.sina.clevercapitalist.view.authenticationView.SignUpView
 import xyz.sina.clevercapitalist.ui.theme.CleverCapitalistTheme
+import xyz.sina.clevercapitalist.view.RegisterForm
 
 
 @AndroidEntryPoint
@@ -46,5 +47,6 @@ fun Navigation(navController: NavHostController){
         composable(Routes.SIGN_IN_ROUTE){ SignInView(navController = navController) }
         composable(Routes.SIGN_UP_ROUTE){ SignUpView(navController = navController) }
         composable(Routes.MAIN_ROUTE){ MainView(navController = navController) }
+        composable(Routes.REGISTER_FORM){ RegisterForm()}
     }
 }
