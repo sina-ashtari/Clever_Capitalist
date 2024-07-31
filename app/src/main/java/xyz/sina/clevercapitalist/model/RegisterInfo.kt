@@ -5,6 +5,6 @@ data class RegisterInfo(
     // These data are monthly
     val houseRent : Double  = 0.0,
     val transport : Double  = 0.0,
-    val regularlySpends : Double = 0.0,
+    val debts : Double = 0.0,
     val otherExpenses : Double = 0.0
 )

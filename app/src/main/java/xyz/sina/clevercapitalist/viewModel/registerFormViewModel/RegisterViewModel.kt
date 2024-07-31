@@ -1,5 +1,6 @@
 package xyz.sina.clevercapitalist.viewModel.registerFormViewModel
 
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,8 +19,9 @@ class RegisterViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 fireStore.collection("register_info").add(registerInfo)
+                Log.e("CHECK","WORKED")
             }catch (e:Exception){
-
+                Log.e("CHECK","DIDNT WORK")
             }
         }
     }
