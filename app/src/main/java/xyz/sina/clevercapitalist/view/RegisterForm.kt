@@ -8,26 +8,34 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.google.firebase.auth.UserInfo
+import kotlinx.coroutines.launch
 import xyz.sina.clevercapitalist.model.RegisterInfo
 import xyz.sina.clevercapitalist.viewModel.registerFormViewModel.RegisterViewModel
 
 
 @Composable
-fun RegisterForm(){
+fun RegisterForm(navController: NavHostController){
 
     val viewModel : RegisterViewModel = hiltViewModel()
+
+    val snackBarHostState = remember {SnackbarHostState()}
+    val scope = rememberCoroutineScope()
 
     var userName by remember { mutableStateOf("") }
     var rent by remember { mutableStateOf("") }
@@ -35,7 +43,9 @@ fun RegisterForm(){
     var debts by remember { mutableStateOf("") }
     var otherExpenses by remember { mutableStateOf("") }
 
-    Scaffold(){ innerPadding ->
+    Scaffold(snackbarHost = {
+        SnackbarHost(hostState = snackBarHostState)
+    }){ innerPadding ->
         Column(modifier = Modifier.padding(innerPadding), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Please enter your name")
             OutlinedTextField(value = userName, onValueChange = {userName = it }, label = {Text("Name")})
@@ -62,6 +72,13 @@ fun RegisterForm(){
                     otherExpenses = otherExpenses.toDoubleOrNull() ?: 0.0
                 )
                 viewModel.saveRegisterInfo(userInfo)
+                if(viewModel.fireStoreIsSuccess){
+                    navController.navigate(Routes.DASHBOARD_ROUTE)
+                }else{
+                    scope.launch {
+                        snackBarHostState.showSnackbar("Try again")
+                    }
+                }
             }) {
                 Text("Good to go!")
             }
