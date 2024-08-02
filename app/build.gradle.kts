@@ -107,7 +107,6 @@ dependencies {
     implementation (libs.androidx.runtime.livedata)
 
     implementation(libs.androidx.lifecycle.runtime.compose)
-
 }
 kapt {
     correctErrorTypes = true
