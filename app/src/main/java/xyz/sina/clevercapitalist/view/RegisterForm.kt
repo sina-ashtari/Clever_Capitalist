@@ -72,13 +72,8 @@ fun RegisterForm(navController: NavHostController){
                     otherExpenses = otherExpenses.toDoubleOrNull() ?: 0.0
                 )
                 viewModel.saveRegisterInfo(userInfo)
-                if(viewModel.fireStoreIsSuccess){
-                    navController.navigate(Routes.DASHBOARD_ROUTE)
-                }else{
-                    scope.launch {
-                        snackBarHostState.showSnackbar("Try again")
-                    }
-                }
+                navController.navigate(Routes.DASHBOARD_ROUTE)
+
             }) {
                 Text("Good to go!")
             }
