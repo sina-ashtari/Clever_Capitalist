@@ -18,6 +18,7 @@ import xyz.sina.clevercapitalist.view.Routes
 import xyz.sina.clevercapitalist.view.authenticationView.SignInView
 import xyz.sina.clevercapitalist.view.authenticationView.SignUpView
 import xyz.sina.clevercapitalist.ui.theme.CleverCapitalistTheme
+import xyz.sina.clevercapitalist.view.Dashboard
 import xyz.sina.clevercapitalist.view.RegisterForm
 
 
@@ -36,7 +37,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
 
                 if(currentUser != null){
-                    Navigation(navController = navController, Routes.REGISTER_FORM)
+                    Navigation(navController = navController, Routes.DASHBOARD_ROUTE)
                 }else{
                     Navigation(navController = navController,Routes.MAIN_ROUTE )
                 }
@@ -56,5 +57,6 @@ fun Navigation(navController: NavHostController, startDestination : String){
         composable(Routes.SIGN_UP_ROUTE){ SignUpView(navController = navController) }
         composable(Routes.MAIN_ROUTE){ MainView(navController = navController) }
         composable(Routes.REGISTER_FORM){ RegisterForm(navController = navController)}
+        composable(Routes.DASHBOARD_ROUTE){ Dashboard()}
     }
 }

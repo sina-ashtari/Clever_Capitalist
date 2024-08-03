@@ -6,24 +6,15 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
-class FirestoreRepository @Inject constructor(
-    private val firestore: FirebaseFirestore
-){
-
-    fun getUserData(): Flow<Result<RegisterInfo>> = flow {
-        try {
-            val document = firestore.collection("register_info").document().get().await()
-            val data = document.toObject(RegisterInfo::class.java)
-            if (data != null) {
-                emit(Result.success(data))
-            }else{
-                emit(Result.failure(Exception("User Not Found")))
+class FirestoreRepository(private val db: FirebaseFirestore){
+    suspend fun getDataFromFireStore(): List<RegisterInfo>{
+        return try{
+            val snapshot =db.collection("register_info").get().await()
+            snapshot.documents.mapNotNull { document ->
+                document.toObject(RegisterInfo::class.java)
             }
-
-        }catch (e: Exception){
-            emit(Result.failure(e))
+        }catch (e:Exception){
+            emptyList()
         }
-
     }
-
 }
