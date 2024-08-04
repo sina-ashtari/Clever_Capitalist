@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
+import xyz.sina.clevercapitalist.view.Routes
 import xyz.sina.clevercapitalist.viewModel.authentication.SignInViewModel
 
 @Composable
@@ -57,22 +58,18 @@ fun SignInView(navController: NavHostController) {
             Button(onClick = { viewModel.signIn(email = email.value , password = password.value) }) {
                 Text("Sign in")
             }
-
         }
 
         signInState?.let {result ->
             when {
                 result.isSuccess ->{
-                    scope.launch { snackBarHostState.showSnackbar("worked") }
+                    navController.navigate(Routes.DASHBOARD_ROUTE)
                 }
                 result.isFailure ->{
                     scope.launch { snackBarHostState.showSnackbar("try again") }
                 }
-
             }
-
         }
     }
-
 
 }
