@@ -51,12 +51,11 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Navigation(navController: NavHostController, startDestination : String){
-
     NavHost(navController = navController, startDestination = startDestination){
         composable(Routes.SIGN_IN_ROUTE){ SignInView(navController = navController) }
         composable(Routes.SIGN_UP_ROUTE){ SignUpView(navController = navController) }
         composable(Routes.MAIN_ROUTE){ MainView(navController = navController) }
         composable(Routes.REGISTER_FORM){ RegisterForm(navController = navController)}
-        composable(Routes.DASHBOARD_ROUTE){ Dashboard()}
+        composable(Routes.DASHBOARD_ROUTE){ Dashboard(navController = navController)}
     }
 }
