@@ -7,9 +7,9 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class FirestoreRepository(private val db: FirebaseFirestore){
-    suspend fun getDataFromFireStore(): List<RegisterInfo>{
+    suspend fun getDataFromFireStore(uid: String): List<RegisterInfo>{
         return try{
-            val snapshot =db.collection("register_info").get().await()
+            val snapshot =db.collection("users").document(uid).collection("register_info").get().await()
             snapshot.documents.mapNotNull { document ->
                 document.toObject(RegisterInfo::class.java)
             }
