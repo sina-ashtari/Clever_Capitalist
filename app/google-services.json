@@ -12,7 +12,12 @@
           "package_name": "xyz.sina.clevercapitalist"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "903785869074-olpgbtbe1qvq1fqin2e46gla205gms2b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAxB0bQnwYj_tLFLPS7GPlTZR9VgNlJwOE"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903785869074-olpgbtbe1qvq1fqin2e46gla205gms2b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
