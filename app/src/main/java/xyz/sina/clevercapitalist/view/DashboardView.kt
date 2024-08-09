@@ -3,7 +3,12 @@ package xyz.sina.clevercapitalist.view
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -23,9 +28,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import co.yml.charts.common.model.PlotType
+import co.yml.charts.ui.piechart.charts.PieChart
+import co.yml.charts.ui.piechart.models.PieChartConfig
+import co.yml.charts.ui.piechart.models.PieChartData
 import com.google.firebase.auth.FirebaseAuth
 import xyz.sina.clevercapitalist.model.RegisterInfo
 import xyz.sina.clevercapitalist.viewModel.DashboardViewModel
@@ -42,21 +55,57 @@ fun Dashboard(navController: NavHostController) {
 
 @Composable
 fun UserUI(data: State<List<RegisterInfo>>,navController: NavHostController) {
+
+    val userName = remember {
+        mutableStateOf("")
+    }
+    var leftOver = 0f
+    var debts = 0f
+    var trasport = 0f
+    var houseRent = 0f
+    var otherExpenses = 0f
+
     Scaffold(modifier = Modifier,
         topBar = {
-            Row(horizontalArrangement = Arrangement.End){
-                TopAppBar(title = { DropDownMenu(navController = navController) })
-            }
+            TopAppBar(modifier = Modifier.padding(14.dp) , title = {DropDownMenu(navController = navController)})
         }
     ){innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
+
+        Column(modifier = Modifier
+            .padding(innerPadding)
+            .verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
             data.value.forEach { item ->
-                Text(text = "hello ${item.userName}!")
-                Text(text = "Your previous debts are : ${item.debts}")
-                Text(text = "Your monthly transport fee : ${item.transport}")
-                Text(text = "Your house rent is : ${item.houseRent}")
-                Text(text = "Your other stuff : ${item.otherExpenses}" )
+                userName.value = item.userName
+                debts = item.debts.toFloat()
+                trasport = item.transport.toFloat()
+                houseRent = item.houseRent.toFloat()
+                otherExpenses = item.otherExpenses.toFloat()
+                leftOver = if(item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses) < 0 ) 0f else (item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses))
+
             }
+
+            val pieChartData = PieChartData(
+                plotType = PlotType.Pie,
+                slices = listOf(
+                    PieChartData.Slice("Debts", debts, Color(0xFF333333)),
+                    PieChartData.Slice("Transport", trasport, Color(0xFF666a86)),
+                    PieChartData.Slice("House rent", houseRent, Color(0xFF95B8D1)),
+                    PieChartData.Slice("Other expenses", otherExpenses, Color(0xFFF53844)),
+                    PieChartData.Slice("Left over", leftOver, Color.Yellow)
+                )
+            )
+
+            val pieChartConfig = PieChartConfig(
+                isAnimationEnable = true,
+                showSliceLabels = true,
+                animationDuration = 1500,
+                backgroundColor = Color.Transparent
+            )
+            PieChart(modifier = Modifier
+                .width(400.dp)
+                .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
+
+
         }
     }
 }
