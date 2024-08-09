@@ -32,10 +32,7 @@ class SignUpViewModel @Inject constructor(
                 _signUpState.value = Result.failure(e)
             }
         }
-
     }
-
-
-
-
 }
+
+

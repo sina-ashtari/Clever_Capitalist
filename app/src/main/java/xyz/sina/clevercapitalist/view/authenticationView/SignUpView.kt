@@ -1,5 +1,8 @@
 package xyz.sina.clevercapitalist.view.authenticationView
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,13 +32,21 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import xyz.sina.clevercapitalist.view.Routes
+import xyz.sina.clevercapitalist.viewModel.authentication.GISViewModel
 import xyz.sina.clevercapitalist.viewModel.authentication.SignUpViewModel
 
 @Composable
 fun SignUpView(navController: NavHostController) {
 
     val viewModel : SignUpViewModel = hiltViewModel()
+    val gisViewModel : GISViewModel = hiltViewModel()
+
+    val launcher  = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {result ->
+        gisViewModel.handleOneTapResult(result.data)
+    }
+
     val signUpState by viewModel.signUpState.observeAsState()
+    val gisState by gisViewModel.gisState
 
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
@@ -49,7 +60,7 @@ fun SignUpView(navController: NavHostController) {
         Column (modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { }) {
+            Button(onClick = { gisViewModel.oneTapSignIn(launcher) }) {
                 Text(text = "Continue with Google")
             }
             Row(modifier = Modifier
@@ -65,6 +76,10 @@ fun SignUpView(navController: NavHostController) {
             Spacer(modifier = Modifier.height(8.dp))
             Button(onClick = {viewModel.signUp(email = email.value, password = password.value)}) {
                 Text("Sign up")
+            }
+
+            gisState?.let{
+                navController.navigate(Routes.REGISTER_FORM)
             }
 
             signUpState?.let {result->
