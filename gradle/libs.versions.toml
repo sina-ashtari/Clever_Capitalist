@@ -28,6 +28,7 @@ retrofit = "2.9.0"
 runtimeLivedata = "1.6.8"
 ui = "1.6.8"
 uiToolingPreview = "1.6.8"
+ychartsVersion = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -68,6 +69,7 @@ realm-gradle-plugin = { module = "io.realm:realm-gradle-plugin", version.ref = "
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
+yml-ycharts = { module = "co.yml:ycharts", version.ref = "ychartsVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
