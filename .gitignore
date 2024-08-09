@@ -14,3 +14,4 @@
 .cxx
 local.properties
 /.idea/GitCommitMessageStorage.xml
+/app/google-services.json
