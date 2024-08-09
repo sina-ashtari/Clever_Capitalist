@@ -38,6 +38,7 @@ fun RegisterForm(navController: NavHostController){
     val scope = rememberCoroutineScope()
 
     var userName by remember { mutableStateOf("") }
+    var salary by remember { mutableStateOf("") }
     var rent by remember { mutableStateOf("") }
     var transport by remember { mutableStateOf("") }
     var debts by remember { mutableStateOf("") }
@@ -49,6 +50,8 @@ fun RegisterForm(navController: NavHostController){
         Column(modifier = Modifier.padding(innerPadding), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             Text("Please enter your name")
             OutlinedTextField(value = userName, onValueChange = {userName = it }, label = {Text("Name")})
+            Text("Please enter your monthly salary")
+            OutlinedTextField(value = salary, onValueChange = {salary = it }, label = {Text("Monthly Salary")})
             Spacer(modifier=  Modifier.height(8.dp))
             // IDK now how to implement these in country which everything changes in seconds
             Text("How about your house ?")
@@ -66,6 +69,7 @@ fun RegisterForm(navController: NavHostController){
             Button(onClick = {
                 val userInfo = RegisterInfo(
                     userName = userName,
+                    salary = salary.toDoubleOrNull() ?: 0.0,
                     houseRent = rent.toDoubleOrNull() ?: 0.0,
                     transport = transport.toDoubleOrNull() ?: 0.0,
                     debts = debts.toDoubleOrNull() ?: 0.0,
