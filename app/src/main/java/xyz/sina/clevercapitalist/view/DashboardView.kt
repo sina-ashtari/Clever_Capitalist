@@ -1,8 +1,13 @@
 package xyz.sina.clevercapitalist.view
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -67,13 +72,13 @@ fun UserUI(data: State<List<RegisterInfo>>,navController: NavHostController) {
 
     Scaffold(modifier = Modifier,
         topBar = {
-            TopAppBar(modifier = Modifier.padding(14.dp) , title = {DropDownMenu(navController = navController)})
+            TopAppBar( title = {DropDownMenu(navController = navController)})
         }
     ){innerPadding ->
 
         Column(modifier = Modifier
             .padding(innerPadding)
-            .verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
+            .verticalScroll(rememberScrollState())) {
             data.value.forEach { item ->
                 userName.value = item.userName
                 debts = item.debts.toFloat()
@@ -94,17 +99,53 @@ fun UserUI(data: State<List<RegisterInfo>>,navController: NavHostController) {
                     PieChartData.Slice("Left over", leftOver, Color.Yellow)
                 )
             )
-
             val pieChartConfig = PieChartConfig(
                 isAnimationEnable = true,
                 showSliceLabels = true,
                 animationDuration = 1500,
                 backgroundColor = Color.Transparent
             )
-            PieChart(modifier = Modifier
-                .width(400.dp)
-                .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
+            // delete this shit
 
+            Box(modifier = Modifier.fillMaxSize() ,contentAlignment = Alignment.Center){
+                Row(modifier = Modifier.fillMaxWidth()){
+                    Box(modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                        .background(Color(0xFF333333)))
+
+                    Text(text = "Debts")
+                    Box(modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                        .background(Color(0xFF666a86)))
+
+                    Text(text = "Transport")
+                    Box(modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                        .background(Color(0xFF95B8D1)))
+                    Text(text = "House rent")
+                }
+                Row(modifier = Modifier.fillMaxWidth()){
+                    Box(modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                        .background(Color(0xFFF53844)))
+
+                    Text(text = "Other expenses")
+                    Box(modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                        .background(Color.Yellow))
+
+                    Text(text = "Left over")
+
+                }
+                PieChart(modifier = Modifier
+                    .width(400.dp)
+                    .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
+            }
 
         }
     }
