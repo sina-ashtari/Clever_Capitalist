@@ -90,6 +90,7 @@ dependencies {
 
     // realm database
     implementation (libs.realm.gradle.plugin)
+    implementation (libs.library.base)
 
     // firebase
     implementation (libs.firebase.auth)
