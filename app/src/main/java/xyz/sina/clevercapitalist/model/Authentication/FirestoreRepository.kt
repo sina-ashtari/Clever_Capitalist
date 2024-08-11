@@ -1,10 +1,8 @@
-package xyz.sina.clevercapitalist.model
+package xyz.sina.clevercapitalist.model.Authentication
 
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
+import xyz.sina.clevercapitalist.model.RegisterInfo
 
 class FirestoreRepository(private val db: FirebaseFirestore){
     suspend fun getDataFromFireStore(uid: String): List<RegisterInfo>{

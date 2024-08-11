@@ -1,4 +1,4 @@
-package xyz.sina.clevercapitalist.model
+package xyz.sina.clevercapitalist.model.Authentication
 
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module

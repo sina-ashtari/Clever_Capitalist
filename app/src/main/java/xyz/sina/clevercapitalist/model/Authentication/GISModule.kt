@@ -1,8 +1,6 @@
-package xyz.sina.clevercapitalist.model
+package xyz.sina.clevercapitalist.model.Authentication
 
 import android.content.Context
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
