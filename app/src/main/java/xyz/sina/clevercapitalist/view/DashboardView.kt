@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import co.yml.charts.common.extensions.isNotNull
 import co.yml.charts.common.model.PlotType
 import co.yml.charts.ui.piechart.charts.PieChart
 import co.yml.charts.ui.piechart.models.PieChartConfig
@@ -47,13 +48,17 @@ import co.yml.charts.ui.piechart.models.PieChartData
 import com.google.firebase.auth.FirebaseAuth
 import xyz.sina.clevercapitalist.model.RegisterInfo
 import xyz.sina.clevercapitalist.viewModel.DashboardViewModel
+import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 
 
 @Composable
 fun Dashboard(navController: NavHostController) {
 
     val viewModel : DashboardViewModel = hiltViewModel()
+    val realmViewModel : RealmViewModel = hiltViewModel()
+
     val data = viewModel.data.collectAsState()
+
     UserUI(data,navController)
 
 }
@@ -86,7 +91,6 @@ fun UserUI(data: State<List<RegisterInfo>>,navController: NavHostController) {
                 houseRent = item.houseRent.toFloat()
                 otherExpenses = item.otherExpenses.toFloat()
                 leftOver = if(item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses) < 0 ) 0f else (item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses))
-
             }
 
             val pieChartData = PieChartData(
@@ -107,46 +111,51 @@ fun UserUI(data: State<List<RegisterInfo>>,navController: NavHostController) {
             )
             // delete this shit
 
-            Box(modifier = Modifier.fillMaxSize() ,contentAlignment = Alignment.Center){
-                Row(modifier = Modifier.fillMaxWidth()){
-                    Box(modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                        .background(Color(0xFF333333)))
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding) ,contentAlignment = Alignment.Center){
+                Column{
+                    Row(modifier = Modifier.fillMaxWidth()){
+                        Box(modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .background(Color(0xFF333333)))
 
-                    Text(text = "Debts")
-                    Box(modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                        .background(Color(0xFF666a86)))
+                        Text(text = "Debts")
+                        Box(modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .background(Color(0xFF666a86)))
 
-                    Text(text = "Transport")
-                    Box(modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                        .background(Color(0xFF95B8D1)))
-                    Text(text = "House rent")
+                        Text(text = "Transport")
+                        Box(modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .background(Color(0xFF95B8D1)))
+                        Text(text = "House rent")
+                    }
+                    Row(modifier = Modifier.fillMaxWidth()){
+                        Box(modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .background(Color(0xFFF53844)))
+
+                        Text(text = "Other expenses")
+                        Box(modifier = Modifier
+                            .width(30.dp)
+                            .height(30.dp)
+                            .background(Color.Yellow))
+
+                        Text(text = "Left over")
+
+                    }
                 }
-                Row(modifier = Modifier.fillMaxWidth()){
-                    Box(modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                        .background(Color(0xFFF53844)))
 
-                    Text(text = "Other expenses")
-                    Box(modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                        .background(Color.Yellow))
-
-                    Text(text = "Left over")
-
-                }
-                PieChart(modifier = Modifier
-                    .width(400.dp)
-                    .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
             }
 
+            PieChart(modifier = Modifier
+                .width(400.dp)
+                .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
         }
     }
 }

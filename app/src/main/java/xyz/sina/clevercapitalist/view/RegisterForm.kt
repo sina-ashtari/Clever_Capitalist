@@ -13,6 +13,7 @@ import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +26,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.UserInfo
 import kotlinx.coroutines.launch
+import xyz.sina.clevercapitalist.model.RealmRegisterInfo
 import xyz.sina.clevercapitalist.model.RegisterInfo
+import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 import xyz.sina.clevercapitalist.viewModel.registerFormViewModel.RegisterViewModel
 
 
@@ -33,6 +36,7 @@ import xyz.sina.clevercapitalist.viewModel.registerFormViewModel.RegisterViewMod
 fun RegisterForm(navController: NavHostController){
 
     val viewModel : RegisterViewModel = hiltViewModel()
+    val realmViewModel : RealmViewModel = hiltViewModel()
 
     val snackBarHostState = remember {SnackbarHostState()}
     val scope = rememberCoroutineScope()
@@ -68,13 +72,26 @@ fun RegisterForm(navController: NavHostController){
             Spacer(modifier=  Modifier.height(8.dp))
             Button(onClick = {
                 val userInfo = RegisterInfo(
-                    userName = userName,
+                    userName = userName ,
                     salary = salary.toDoubleOrNull() ?: 0.0,
                     houseRent = rent.toDoubleOrNull() ?: 0.0,
                     transport = transport.toDoubleOrNull() ?: 0.0,
                     debts = debts.toDoubleOrNull() ?: 0.0,
                     otherExpenses = otherExpenses.toDoubleOrNull() ?: 0.0
                 )
+
+                scope.launch {
+                    val realmRegisterInfo = RealmRegisterInfo().apply {
+                        dbUserName = userName
+                        dbSalary = salary.toDoubleOrNull() ?: 0.0
+                        dbHouseRent = rent.toDoubleOrNull() ?: 0.0
+                        dbTransport = transport.toDoubleOrNull() ?: 0.0
+                        dbDebts = debts.toDoubleOrNull() ?: 0.0
+                        dbOtherExpenses = otherExpenses.toDoubleOrNull() ?: 0.0
+                    }
+                    realmViewModel.addRegisterInfo(realmRegisterInfo)
+                }
+
                 viewModel.saveRegisterInfo(userInfo)
                 navController.navigate(Routes.DASHBOARD_ROUTE)
 

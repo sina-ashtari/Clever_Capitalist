@@ -1,9 +1,5 @@
 package xyz.sina.clevercapitalist.viewModel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.currentCompositionErrors
-import androidx.compose.runtime.mutableStateOf
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -11,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import xyz.sina.clevercapitalist.model.FirestoreRepository
+import xyz.sina.clevercapitalist.model.Authentication.FirestoreRepository
 import xyz.sina.clevercapitalist.model.RegisterInfo
 import javax.inject.Inject
 
