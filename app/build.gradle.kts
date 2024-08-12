@@ -5,6 +5,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    id ("realm-android")
 }
 
 android {
@@ -91,6 +92,7 @@ dependencies {
     // realm database
     implementation (libs.realm.gradle.plugin)
     implementation (libs.library.base)
+    kapt (libs.realm.annotations.processor)
 
     // firebase
     implementation (libs.firebase.auth)

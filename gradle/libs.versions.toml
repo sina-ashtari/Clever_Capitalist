@@ -24,6 +24,7 @@ material = "1.6.8"
 navigationCompose = "2.7.7"
 playServicesAuth = "21.2.0"
 playServicesIdentity = "18.1.0"
+realmAnnotationsProcessor = "10.15.1"
 realmGradlePlugin = "10.7.0"
 retrofit = "2.9.0"
 runtimeLivedata = "1.6.8"
@@ -67,6 +68,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 library-base = { module = "io.realm.kotlin:library-base", version.ref = "libraryBase" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-identity = { module = "com.google.android.gms:play-services-identity", version.ref = "playServicesIdentity" }
+realm-annotations-processor = { module = "io.realm:realm-annotations-processor", version.ref = "realmAnnotationsProcessor" }
 realm-gradle-plugin = { module = "io.realm:realm-gradle-plugin", version.ref = "realmGradlePlugin" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
