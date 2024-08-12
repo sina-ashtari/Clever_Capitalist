@@ -1,17 +1,14 @@
 package xyz.sina.clevercapitalist.view
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.DropdownMenuItem
@@ -37,10 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import co.yml.charts.common.extensions.isNotNull
 import co.yml.charts.common.model.PlotType
 import co.yml.charts.ui.piechart.charts.PieChart
 import co.yml.charts.ui.piechart.models.PieChartConfig
@@ -55,16 +50,19 @@ import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 fun Dashboard(navController: NavHostController) {
 
     val viewModel : DashboardViewModel = hiltViewModel()
-    val realmViewModel : RealmViewModel = hiltViewModel()
 
     val data = viewModel.data.collectAsState()
+
 
     UserUI(data,navController)
 
 }
 
 @Composable
-fun UserUI(data: State<List<RegisterInfo>>,navController: NavHostController) {
+fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
+
+    val realmViewModel : RealmViewModel = hiltViewModel()
+    val realmRegisterInfo = realmViewModel.realmRegisterInfo.collectAsState()
 
     val userName = remember {
         mutableStateOf("")
@@ -84,14 +82,26 @@ fun UserUI(data: State<List<RegisterInfo>>,navController: NavHostController) {
         Column(modifier = Modifier
             .padding(innerPadding)
             .verticalScroll(rememberScrollState())) {
-            data.value.forEach { item ->
-                userName.value = item.userName
-                debts = item.debts.toFloat()
-                trasport = item.transport.toFloat()
-                houseRent = item.houseRent.toFloat()
-                otherExpenses = item.otherExpenses.toFloat()
-                leftOver = if(item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses) < 0 ) 0f else (item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses))
+            if (data.value.isEmpty()){
+                data.value.forEach { item ->
+                    userName.value = item.userName
+                    debts = item.debts.toFloat()
+                    trasport = item.transport.toFloat()
+                    houseRent = item.houseRent.toFloat()
+                    otherExpenses = item.otherExpenses.toFloat()
+                    leftOver = if(item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses) < 0 ) 0f else (item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses))
+                }
+            }else{
+                realmRegisterInfo.value.forEach{ item ->
+                    userName.value = item.dbUserName
+                    debts = item.dbDebts.toFloat()
+                    trasport = item.dbTransport.toFloat()
+                    houseRent = item.dbHouseRent.toFloat()
+                    otherExpenses = item.dbOtherExpenses.toFloat()
+                    leftOver = if(item.dbSalary.toFloat() - (debts + trasport + houseRent + otherExpenses) < 0 ) 0f else (item.dbSalary.toFloat() - (debts + trasport + houseRent + otherExpenses))
+                }
             }
+
 
             val pieChartData = PieChartData(
                 plotType = PlotType.Pie,

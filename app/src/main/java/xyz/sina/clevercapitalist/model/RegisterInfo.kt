@@ -14,7 +14,7 @@ data class RegisterInfo(
 )
 class RealmRegisterInfo: RealmObject{
     @PrimaryKey
-    var id : String = ""
+    var id : Int = 0
     var dbUserName : String = ""
     var dbSalary : Double = 0.0
     var dbHouseRent : Double  = 0.0
