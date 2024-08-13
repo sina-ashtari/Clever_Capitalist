@@ -11,7 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.DropdownMenuItem
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -62,6 +65,7 @@ fun Dashboard(navController: NavHostController) {
 fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
 
     val realmViewModel : RealmViewModel = hiltViewModel()
+    realmViewModel.loadRegisterInfo()
     val realmRegisterInfo = realmViewModel.realmRegisterInfo.collectAsState()
 
     val userName = remember {
@@ -69,9 +73,11 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
     }
     var leftOver = 0f
     var debts = 0f
-    var trasport = 0f
+    var transport = 0f
     var houseRent = 0f
     var otherExpenses = 0f
+
+
 
     Scaffold(modifier = Modifier,
         topBar = {
@@ -86,19 +92,19 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
                 data.value.forEach { item ->
                     userName.value = item.userName
                     debts = item.debts.toFloat()
-                    trasport = item.transport.toFloat()
+                    transport = item.transport.toFloat()
                     houseRent = item.houseRent.toFloat()
                     otherExpenses = item.otherExpenses.toFloat()
-                    leftOver = if(item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses) < 0 ) 0f else (item.salary.toFloat() - (debts + trasport + houseRent + otherExpenses))
+                    leftOver = if(item.salary.toFloat() - (debts + transport + houseRent + otherExpenses) < 0 ) 0f else (item.salary.toFloat() - (debts + transport + houseRent + otherExpenses))
                 }
             }else{
                 realmRegisterInfo.value.forEach{ item ->
                     userName.value = item.dbUserName
                     debts = item.dbDebts.toFloat()
-                    trasport = item.dbTransport.toFloat()
+                    transport = item.dbTransport.toFloat()
                     houseRent = item.dbHouseRent.toFloat()
                     otherExpenses = item.dbOtherExpenses.toFloat()
-                    leftOver = if(item.dbSalary.toFloat() - (debts + trasport + houseRent + otherExpenses) < 0 ) 0f else (item.dbSalary.toFloat() - (debts + trasport + houseRent + otherExpenses))
+                    leftOver = if(item.dbSalary.toFloat() - (debts + transport + houseRent + otherExpenses) < 0 ) 0f else (item.dbSalary.toFloat() - (debts + transport + houseRent + otherExpenses))
                 }
             }
 
@@ -107,7 +113,7 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
                 plotType = PlotType.Pie,
                 slices = listOf(
                     PieChartData.Slice("Debts", debts, Color(0xFF333333)),
-                    PieChartData.Slice("Transport", trasport, Color(0xFF666a86)),
+                    PieChartData.Slice("Transport", transport, Color(0xFF666a86)),
                     PieChartData.Slice("House rent", houseRent, Color(0xFF95B8D1)),
                     PieChartData.Slice("Other expenses", otherExpenses, Color(0xFFF53844)),
                     PieChartData.Slice("Left over", leftOver, Color.Yellow)
@@ -119,7 +125,6 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
                 animationDuration = 1500,
                 backgroundColor = Color.Transparent
             )
-            // delete this shit
 
             Box(modifier = Modifier
                 .fillMaxSize()
@@ -183,7 +188,10 @@ fun DropDownMenu(navController: NavHostController){
         Icon(imageVector = Icons.Default.MoreVert, contentDescription = "more")
     }
     DropdownMenu(expanded = expanded, onDismissRequest = {expanded = false}) {
-        DropdownMenuItem(onClick = {openAlertDialog.value = true}) {
+        DropdownMenuItem(onClick = {
+            openAlertDialog.value = true
+            expanded = false
+        }) {
             Text("Log out")
         }
     }
@@ -197,9 +205,15 @@ fun ShowAlertDialog(openAlertDialog: MutableState<Boolean>,navController: NavHos
     if(openAlertDialog.value){
         AlertDialog(onDismissRequest = {openAlertDialog.value = false} ,
             confirmButton = {
+                Button(onClick = {
                     openAlertDialog.value = false
                     FirebaseAuth.getInstance().signOut()
                     navController.navigate(Routes.MAIN_ROUTE)
+                }) {
+                    Text("Logout")
+                }
+
+
                             },
             title = {Text("Log out")},
             icon = { Icon(imageVector = Icons.Default.Info, contentDescription = null)},
