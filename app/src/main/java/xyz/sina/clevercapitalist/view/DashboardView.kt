@@ -53,10 +53,7 @@ import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 fun Dashboard(navController: NavHostController) {
 
     val viewModel : DashboardViewModel = hiltViewModel()
-
     val data = viewModel.data.collectAsState()
-
-
     UserUI(data,navController)
 
 }
