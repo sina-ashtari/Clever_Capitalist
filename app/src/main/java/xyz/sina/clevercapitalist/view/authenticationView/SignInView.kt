@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
@@ -11,6 +12,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,14 +50,12 @@ fun SignInView(navController: NavHostController) {
             .fillMaxSize()
             .padding(innerPadding), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){
 
-            OutlinedTextField(value = email.value, onValueChange = {email.value = it} , label = { Text(
-                text = "Email"
-            )})
-            OutlinedTextField(value = password.value, onValueChange = {password.value = it} , visualTransformation = PasswordVisualTransformation() , label = { Text(
-                text = "Password"
-            )})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp), value = email.value, onValueChange = {email.value = it} , label = {
+                Text(text = "Email", color = MaterialTheme.colorScheme.onBackground)})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp), value = password.value, onValueChange = {password.value = it} , visualTransformation = PasswordVisualTransformation() , label = {
+                Text(text = "Password", color = MaterialTheme.colorScheme.onBackground)})
             Spacer(modifier = Modifier.height(8.dp))
-            Button(onClick = { viewModel.signIn(email = email.value , password = password.value) }) {
+            Button(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),colors = androidx.compose.material.ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),onClick = { viewModel.signIn(email = email.value , password = password.value) }) {
                 Text("Sign in")
             }
         }

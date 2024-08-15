@@ -23,6 +23,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,17 +75,17 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
     var houseRent = 0f
     var otherExpenses = 0f
 
-
-
     Scaffold(modifier = Modifier,
         topBar = {
-            TopAppBar( title = {DropDownMenu(navController = navController)})
+            TopAppBar( backgroundColor = MaterialTheme.colorScheme.surfaceTint ,title = {DropDownMenu(navController = navController)})
         }
     ){innerPadding ->
 
         Column(modifier = Modifier
             .padding(innerPadding)
-            .verticalScroll(rememberScrollState())) {
+            .verticalScroll(rememberScrollState()).background(
+                MaterialTheme.colorScheme.background
+            )) {
             if (data.value.isEmpty()){
                 data.value.forEach { item ->
                     userName.value = item.userName
@@ -182,7 +183,7 @@ fun DropDownMenu(navController: NavHostController){
     }
 
     IconButton(onClick = {expanded = !expanded}) {
-        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "more")
+        Icon(imageVector = Icons.Default.MoreVert, contentDescription = "more",tint = MaterialTheme.colorScheme.onSurface)
     }
     DropdownMenu(expanded = expanded, onDismissRequest = {expanded = false}) {
         DropdownMenuItem(onClick = {
