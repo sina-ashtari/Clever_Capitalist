@@ -13,7 +13,6 @@ import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -45,7 +44,9 @@ fun SignInView(navController: NavHostController) {
         SnackbarHostState()
     }
 
-    Scaffold(snackbarHost = { SnackbarHost(hostState = snackBarHostState)}){ innerPadding ->
+    androidx.compose.material.Scaffold(snackbarHost = { SnackbarHost(hostState = snackBarHostState)},
+        backgroundColor = MaterialTheme.colorScheme.background
+    ){ innerPadding ->
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally){

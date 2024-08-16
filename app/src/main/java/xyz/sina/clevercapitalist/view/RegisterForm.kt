@@ -1,16 +1,21 @@
 package xyz.sina.clevercapitalist.view
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,6 +26,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -32,6 +39,7 @@ import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 import xyz.sina.clevercapitalist.viewModel.registerFormViewModel.RegisterViewModel
 
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun RegisterForm(navController: NavHostController){
 
@@ -50,26 +58,31 @@ fun RegisterForm(navController: NavHostController){
 
     Scaffold(snackbarHost = {
         SnackbarHost(hostState = snackBarHostState)
-    }){ innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Please enter your name")
-            OutlinedTextField(value = userName, onValueChange = {userName = it }, label = {Text("Name")})
-            Text("Please enter your monthly salary")
-            OutlinedTextField(value = salary, onValueChange = {salary = it }, label = {Text("Monthly Salary")})
-            Spacer(modifier=  Modifier.height(8.dp))
+    },
+        backgroundColor = MaterialTheme.colorScheme.background
+    ){ innerPadding ->
+
+        Column(modifier = Modifier.padding(16.dp).fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+            Spacer(modifier=  Modifier.weight(1f))
+            Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Please enter your name")
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(), maxLines = 1 ,value = userName, onValueChange = {userName = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Name")})
+            Spacer(modifier=  Modifier.weight(1f))
+            Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Please enter your monthly salary")
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = salary, onValueChange = {salary = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Salary")})
+            Spacer(modifier=  Modifier.weight(1f))
             // IDK now how to implement these in country which everything changes in seconds
-            Text("How about your house ?")
-            OutlinedTextField(value = rent, onValueChange = {rent = it }, label = {Text("Monthly Rent")})
-            Spacer(modifier=  Modifier.height(8.dp))
-            Text("How much money do you spend to get around?")
-            OutlinedTextField(value = transport, onValueChange = {transport = it }, label = {Text("Monthly transport")})
-            Spacer(modifier=  Modifier.height(8.dp))
-            Text("Do you currently have any debt?")
-            OutlinedTextField(value = debts, onValueChange = {debts = it }, label = {Text("debts")})
-            Spacer(modifier=  Modifier.height(8.dp))
-            Text("How much money do you spend on other things like Internet, Phone, Groceries , etc.?")
-            OutlinedTextField(value = otherExpenses, onValueChange = {otherExpenses = it }, label = {Text("Other expenses")})
-            Spacer(modifier=  Modifier.height(8.dp))
+            Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How about your house ?")
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = rent, onValueChange = {rent = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Rent")})
+            Spacer(modifier=  Modifier.weight(1f))
+            Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How much money do you spend to get around?")
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = transport, onValueChange = {transport = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly transport")})
+            Spacer(modifier=  Modifier.weight(1f))
+            Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Do you currently have any debt?")
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = debts, onValueChange = {debts = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="debts")})
+            Spacer(modifier=  Modifier.weight(1f))
+            Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How much money do you spend on other things like Internet, Phone, Groceries , etc.?")
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = otherExpenses, onValueChange = {otherExpenses = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Other expenses")})
+            Spacer(modifier=  Modifier.weight(1f))
             Button(onClick = {
                 val userInfo = RegisterInfo(
                     userName = userName ,
@@ -94,10 +107,12 @@ fun RegisterForm(navController: NavHostController){
 
                 viewModel.saveRegisterInfo(userInfo)
                 navController.navigate(Routes.DASHBOARD_ROUTE)
-
-            }) {
-                Text("Good to go!")
             }
+            , colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
+            ) {
+                Text(color = MaterialTheme.colorScheme.onPrimary ,text="Good to go!")
+            }
+            Spacer(modifier=  Modifier.weight(1f))
         }
     }
 }

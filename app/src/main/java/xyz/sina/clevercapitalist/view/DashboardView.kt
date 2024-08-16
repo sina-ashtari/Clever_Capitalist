@@ -1,9 +1,11 @@
 package xyz.sina.clevercapitalist.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.DropdownMenuItem
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -50,13 +54,19 @@ import xyz.sina.clevercapitalist.viewModel.DashboardViewModel
 import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 
 
+// someone says i should add some more categories like transport should be like this :
+//          -transport:
+//              -private : owned vehicle or motorcycle
+//                        -fee for oil and servicing
+//              -public :
+//                          - bus
+//
+
 @Composable
 fun Dashboard(navController: NavHostController) {
-
     val viewModel : DashboardViewModel = hiltViewModel()
     val data = viewModel.data.collectAsState()
     UserUI(data,navController)
-
 }
 
 @Composable
@@ -83,7 +93,8 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
 
         Column(modifier = Modifier
             .padding(innerPadding)
-            .verticalScroll(rememberScrollState()).background(
+            .verticalScroll(rememberScrollState())
+            .background(
                 MaterialTheme.colorScheme.background
             )) {
             if (data.value.isEmpty()){
@@ -110,65 +121,68 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
             val pieChartData = PieChartData(
                 plotType = PlotType.Pie,
                 slices = listOf(
-                    PieChartData.Slice("Debts", debts, Color(0xFF333333)),
-                    PieChartData.Slice("Transport", transport, Color(0xFF666a86)),
-                    PieChartData.Slice("House rent", houseRent, Color(0xFF95B8D1)),
-                    PieChartData.Slice("Other expenses", otherExpenses, Color(0xFFF53844)),
-                    PieChartData.Slice("Left over", leftOver, Color.Yellow)
+                    PieChartData.Slice("Debts", debts, Color(251, 97, 7)),
+                    PieChartData.Slice("Transport", transport, Color(243, 222, 44)),
+                    PieChartData.Slice("House rent", houseRent, Color(124, 181, 24)),
+                    PieChartData.Slice("Other expenses", otherExpenses, Color(92, 128, 1)),
+                    PieChartData.Slice("Left over", leftOver, Color(251, 176, 45))
                 )
             )
             val pieChartConfig = PieChartConfig(
                 isAnimationEnable = true,
                 showSliceLabels = true,
                 animationDuration = 1500,
-                backgroundColor = Color.Transparent
+                backgroundColor = Color.Transparent,
+                sliceLabelTextColor = Color.Blue
             )
 
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding) ,contentAlignment = Alignment.Center){
-                Column{
-                    Row(modifier = Modifier.fillMaxWidth()){
+                Column(){
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
                         Box(modifier = Modifier
                             .width(30.dp)
                             .height(30.dp)
-                            .background(Color(0xFF333333)))
+                            .background(Color(251, 97, 7)))
 
-                        Text(text = "Debts")
+                        Text(modifier = Modifier.weight(1f), text = "Debts")
                         Box(modifier = Modifier
                             .width(30.dp)
                             .height(30.dp)
-                            .background(Color(0xFF666a86)))
+                            .background(Color(243, 222, 44)))
 
-                        Text(text = "Transport")
+                        Text(modifier = Modifier.weight(1f), text = "Transport")
                         Box(modifier = Modifier
                             .width(30.dp)
                             .height(30.dp)
-                            .background(Color(0xFF95B8D1)))
-                        Text(text = "House rent")
+                            .background(Color(124, 181, 24)))
+                        Text(modifier = Modifier.weight(1f), text = "House rent")
                     }
-                    Row(modifier = Modifier.fillMaxWidth()){
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
                         Box(modifier = Modifier
                             .width(30.dp)
                             .height(30.dp)
-                            .background(Color(0xFFF53844)))
+                            .background(Color(92, 128, 1)))
 
-                        Text(text = "Other expenses")
+                        Text(modifier = Modifier.weight(1f),text = "Other expenses")
                         Box(modifier = Modifier
                             .width(30.dp)
                             .height(30.dp)
-                            .background(Color.Yellow))
+                            .background(Color(251, 176, 45)))
 
-                        Text(text = "Left over")
+                        Text(modifier = Modifier.weight(1f), text = "Left over")
 
                     }
                 }
 
             }
-
-            PieChart(modifier = Modifier
-                .width(400.dp)
-                .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
+            Box(modifier = Modifier.fillMaxWidth() ,contentAlignment = Alignment.Center){
+                PieChart(modifier = Modifier
+                    .width(400.dp)
+                    .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
+            }
         }
     }
 }
@@ -207,15 +221,20 @@ fun ShowAlertDialog(openAlertDialog: MutableState<Boolean>,navController: NavHos
                     openAlertDialog.value = false
                     FirebaseAuth.getInstance().signOut()
                     navController.navigate(Routes.MAIN_ROUTE)
-                }) {
-                    Text("Logout")
+                },
+                    colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)) {
+                    Text(color = MaterialTheme.colorScheme.onPrimary , text = "Logout")
                 }
 
 
                             },
             title = {Text("Log out")},
             icon = { Icon(imageVector = Icons.Default.Info, contentDescription = null)},
-            text = { Text(text = "Do you really want to log out?")}
+            text = {
+                Row(horizontalArrangement = Arrangement.Center){
+                    Text(color = MaterialTheme.colorScheme.onBackground,text = "Do you really want to log out?")
+                }
+            }
         
             )
     }
