@@ -1,3 +1,4 @@
+![Logo](https://i.imgur.com/McIasNI_d.webp?maxwidth=1520&fidelity=grand)
 
 # 💸Clever Capitalist
 
