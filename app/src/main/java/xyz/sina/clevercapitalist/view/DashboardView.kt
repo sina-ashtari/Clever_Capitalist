@@ -1,6 +1,15 @@
 package xyz.sina.clevercapitalist.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,10 +27,13 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.LinearProgressIndicator
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
@@ -40,7 +52,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -76,14 +90,21 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
     realmViewModel.loadRegisterInfo()
     val realmRegisterInfo = realmViewModel.realmRegisterInfo.collectAsState()
 
-    val userName = remember {
-        mutableStateOf("")
-    }
+    val userName = remember { mutableStateOf("") }
     var leftOver = 0f
     var debts = 0f
     var transport = 0f
     var houseRent = 0f
     var otherExpenses = 0f
+
+    val density = LocalDensity.current
+
+    var monthlyVisibleTab by remember {
+        mutableStateOf(false)
+    }
+    var graphVisibleTab by remember {
+        mutableStateOf(false)
+    }
 
     Scaffold(modifier = Modifier,
         topBar = {
@@ -117,6 +138,36 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
                 }
             }
 
+            Column {
+                Row(modifier = Modifier
+                    .fillMaxSize()
+                    .clickable { monthlyVisibleTab = !monthlyVisibleTab }){
+                    Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(monthlyVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
+                    Text(color = MaterialTheme.colorScheme.onBackground ,text ="Monthly")
+                }
+                AnimatedVisibility(
+                    visible = monthlyVisibleTab,
+                    enter = slideInVertically {
+                        with(density){ -40.dp.roundToPx() }
+                    } + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(initialAlpha = 0.3f),
+                    exit = slideOutVertically ()  + shrinkVertically() + fadeOut()
+                    ) {
+                    Column(modifier = Modifier.padding(start = 16.dp , end = 16.dp)){
+                        Row(modifier =  Modifier.fillMaxWidth()){
+                            Column {
+                                Row(modifier = Modifier.fillMaxWidth()){
+                                    //Icon(imageVector =  , contentDescription = null ) add house icon
+                                    Text(text = "Mortgage")
+                                    Text(modifier = Modifier
+                                        .padding(4.dp)
+                                        .drawBehind { drawOval(color = Color.Green) },text = "$$houseRent")
+                                }
+                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = houseRent)
+                            }
+                        }
+                    }
+                }
+            }
 
             val pieChartData = PieChartData(
                 plotType = PlotType.Pie,
@@ -136,52 +187,71 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
                 sliceLabelTextColor = Color.Blue
             )
 
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding) ,contentAlignment = Alignment.Center){
-                Column(){
-                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
-                        Box(modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                            .background(Color(251, 97, 7)))
-
-                        Text(modifier = Modifier.weight(1f), text = "Debts")
-                        Box(modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                            .background(Color(243, 222, 44)))
-
-                        Text(modifier = Modifier.weight(1f), text = "Transport")
-                        Box(modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                            .background(Color(124, 181, 24)))
-                        Text(modifier = Modifier.weight(1f), text = "House rent")
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
-                        Box(modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                            .background(Color(92, 128, 1)))
-
-                        Text(modifier = Modifier.weight(1f),text = "Other expenses")
-                        Box(modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                            .background(Color(251, 176, 45)))
-
-                        Text(modifier = Modifier.weight(1f), text = "Left over")
-
-                    }
+            Column {
+                Row(modifier = Modifier
+                    .fillMaxSize()
+                    .clickable { graphVisibleTab = !graphVisibleTab }){
+                    Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(monthlyVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
+                    Text(color = MaterialTheme.colorScheme.onBackground ,text ="Graph")
                 }
+                AnimatedVisibility(
+                    visible = graphVisibleTab,
+                    enter = slideInVertically {
+                        with(density){ -40.dp.roundToPx() }
+                    } + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(initialAlpha = 0.3f),
+                    exit = slideOutVertically ()  + shrinkVertically() + fadeOut()
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Box(modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding) ,contentAlignment = Alignment.Center){
+                            Column(){
+                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+                                    Box(modifier = Modifier
+                                        .width(30.dp)
+                                        .height(30.dp)
+                                        .background(Color(251, 97, 7)))
 
-            }
-            Box(modifier = Modifier.fillMaxWidth() ,contentAlignment = Alignment.Center){
-                PieChart(modifier = Modifier
-                    .width(400.dp)
-                    .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
+                                    Text(modifier = Modifier.weight(1f), text = "Debts")
+                                    Box(modifier = Modifier
+                                        .width(30.dp)
+                                        .height(30.dp)
+                                        .background(Color(243, 222, 44)))
+
+                                    Text(modifier = Modifier.weight(1f), text = "Transport")
+                                    Box(modifier = Modifier
+                                        .width(30.dp)
+                                        .height(30.dp)
+                                        .background(Color(124, 181, 24)))
+                                    Text(modifier = Modifier.weight(1f), text = "House rent")
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+                                    Box(modifier = Modifier
+                                        .width(30.dp)
+                                        .height(30.dp)
+                                        .background(Color(92, 128, 1)))
+
+                                    Text(modifier = Modifier.weight(1f),text = "Other expenses")
+                                    Box(modifier = Modifier
+                                        .width(30.dp)
+                                        .height(30.dp)
+                                        .background(Color(251, 176, 45)))
+
+                                    Text(modifier = Modifier.weight(1f), text = "Left over")
+
+                                }
+                            }
+
+                        }
+                        Box(modifier = Modifier.fillMaxWidth() ,contentAlignment = Alignment.Center){
+                            PieChart(modifier = Modifier
+                                .width(400.dp)
+                                .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
+                        }
+                    }
+
+                }
             }
         }
     }
