@@ -108,7 +108,10 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
 
     Scaffold(modifier = Modifier,
         topBar = {
-            TopAppBar( backgroundColor = MaterialTheme.colorScheme.surfaceTint ,title = {DropDownMenu(navController = navController)})
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
+                Spacer(modifier = Modifier.weight(1f))
+                TopAppBar( backgroundColor = MaterialTheme.colorScheme.surfaceTint ,title = {DropDownMenu(navController = navController)})
+            }
         }
     ){innerPadding ->
 
@@ -152,12 +155,13 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
                     } + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(initialAlpha = 0.3f),
                     exit = slideOutVertically ()  + shrinkVertically() + fadeOut()
                     ) {
-                    Column(modifier = Modifier.padding(start = 16.dp , end = 16.dp)){
+                    Column(modifier = Modifier.padding(start = 20.dp , end = 20.dp)){
                         Row(modifier =  Modifier.fillMaxWidth()){
                             Column {
                                 Row(modifier = Modifier.fillMaxWidth()){
                                     //Icon(imageVector =  , contentDescription = null ) add house icon
                                     Text(text = "Mortgage")
+                                    Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
                                         .padding(4.dp)
                                         .drawBehind { drawOval(color = Color.Green) },text = "$$houseRent")
@@ -165,7 +169,47 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
                                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = houseRent)
                             }
                         }
+                        Row(modifier =  Modifier.fillMaxWidth()){
+                            Column {
+                                Row(modifier = Modifier.fillMaxWidth()){
+                                    //Icon(imageVector =  , contentDescription = null ) add transit icon
+                                    Text(text = "transport")
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Text(modifier = Modifier
+                                        .padding(4.dp)
+                                        .drawBehind { drawOval(color = Color.Green) },text = "$$transport")
+                                }
+                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = transport)
+                            }
+                        }
+                        Row(modifier =  Modifier.fillMaxWidth()){
+                            Column {
+                                Row(modifier = Modifier.fillMaxWidth()){
+                                    //Icon(imageVector =  , contentDescription = null ) add house icon
+                                    Text(text = "debts")
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Text(modifier = Modifier
+                                        .padding(4.dp)
+                                        .drawBehind { drawOval(color = Color.Green) },text = "$$debts")
+                                }
+                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = debts)
+                            }
+                        }
+                        Row(modifier =  Modifier.fillMaxWidth()){
+                            Column {
+                                Row(modifier = Modifier.fillMaxWidth()){
+                                    //Icon(imageVector =  , contentDescription = null ) add house icon
+                                    Text(text = "Other Expenses")
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Text(modifier = Modifier
+                                        .padding(4.dp)
+                                        .drawBehind { drawOval(color = Color.Green) },text = "$$otherExpenses")
+                                }
+                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = otherExpenses)
+                            }
+                        }
                     }
+
                 }
             }
 
@@ -191,7 +235,7 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
                 Row(modifier = Modifier
                     .fillMaxSize()
                     .clickable { graphVisibleTab = !graphVisibleTab }){
-                    Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(monthlyVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
+                    Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(graphVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
                     Text(color = MaterialTheme.colorScheme.onBackground ,text ="Graph")
                 }
                 AnimatedVisibility(
