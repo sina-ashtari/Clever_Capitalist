@@ -1,13 +1,17 @@
 package xyz.sina.clevercapitalist.view
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -15,11 +19,17 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -49,6 +60,9 @@ fun RegisterForm(navController: NavHostController){
     val snackBarHostState = remember {SnackbarHostState()}
     val scope = rememberCoroutineScope()
 
+    val goalTextFieldValue = remember{ mutableStateListOf<TextFieldValue>() }
+    val moneyGoalTextFieldValues  = remember { mutableStateListOf<TextFieldValue>()}
+
     var userName by remember { mutableStateOf("") }
     var salary by remember { mutableStateOf("") }
     var rent by remember { mutableStateOf("") }
@@ -62,7 +76,10 @@ fun RegisterForm(navController: NavHostController){
         backgroundColor = MaterialTheme.colorScheme.background
     ){ innerPadding ->
 
-        Column(modifier = Modifier.padding(16.dp).fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(modifier = Modifier
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
+            .fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(modifier=  Modifier.weight(1f))
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Please enter your name")
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), maxLines = 1 ,value = userName, onValueChange = {userName = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Name")})
@@ -83,6 +100,30 @@ fun RegisterForm(navController: NavHostController){
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How much money do you spend on other things like Internet, Phone, Groceries , etc.?")
             OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = otherExpenses, onValueChange = {otherExpenses = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Other expenses")})
             Spacer(modifier=  Modifier.weight(1f))
+            Button(colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+                onClick = {
+                    goalTextFieldValue.add(TextFieldValue(""))
+                    moneyGoalTextFieldValues.add(TextFieldValue(""))
+                }){
+                Text(color = MaterialTheme.colorScheme.onPrimary,text = "Do you have any financial goal? if do, click me!")
+            }
+            goalTextFieldValue.forEachIndexed { index, goalTextFieldValueValue ->
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+                    moneyGoalTextFieldValues.forEachIndexed { _ , moneyGoalTextFieldValue ->
+                        OutlinedTextField(value = goalTextFieldValueValue , onValueChange = {newValue -> goalTextFieldValue[index] = newValue }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Goal ${index+1}")})
+                        OutlinedTextField(value = moneyGoalTextFieldValue , onValueChange = {newValue -> goalTextFieldValue[index] = newValue }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Money ${index+1}")})
+                        IconButton(
+                            onClick = {
+                                goalTextFieldValue.removeAt(index)
+                                moneyGoalTextFieldValues.removeAt(index)
+                            }
+                        ) {
+                            Icon(tint = MaterialTheme.colorScheme.onBackground,imageVector = Icons.Default.Clear, contentDescription = null)
+                        }
+                    }
+                }
+            }
+
             Button(onClick = {
                 val userInfo = RegisterInfo(
                     userName = userName ,
