@@ -1,5 +1,6 @@
 package xyz.sina.clevercapitalist.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +22,7 @@ class DashboardViewModel @Inject constructor(
     private val _data = MutableStateFlow<List<RegisterInfo>>(emptyList())
     val data : StateFlow<List<RegisterInfo>> = _data
 
-    val financialGoalsList = mutableStateListOf<FinancialGoals>()
+    var financialGoalsList = mutableStateListOf<FinancialGoals>()
 
     init {
         fetchData()
@@ -37,6 +38,7 @@ class DashboardViewModel @Inject constructor(
             }
             viewModelScope.launch {
                 val goals = repository.getGoalsFromFireStore(uid)
+                Log.d("FETCHED_GOALS", goals.toString())
                 financialGoalsList.clear()
                 financialGoalsList.addAll(goals)
             }

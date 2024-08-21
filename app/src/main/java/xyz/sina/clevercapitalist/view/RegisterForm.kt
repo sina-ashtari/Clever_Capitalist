@@ -50,18 +50,21 @@ import xyz.sina.clevercapitalist.model.RegisterInfo
 import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 import xyz.sina.clevercapitalist.viewModel.registerFormViewModel.RegisterViewModel
 
+// the issue is i send whole TextFieldValue right here, so change it to STRING OF IT !!!!
 data class FinancialGoals(
     var goal : TextFieldValue = TextFieldValue(""),
     var moneyForGoal : TextFieldValue = TextFieldValue("")
 
-)
-
-fun FinancialGoals.toMap(): Map<String, Any> {
-    return mapOf(
-        "goal" to goal,
-        "moneyForGoal" to moneyForGoal
-    )
+){
+    fun toMap(): Map<String, Any> {
+        return mapOf(
+            "goal" to goal,
+            "moneyForGoal" to moneyForGoal
+        )
+    }
 }
+
+
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable

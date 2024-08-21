@@ -6,7 +6,6 @@ import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 import xyz.sina.clevercapitalist.model.RegisterInfo
 import xyz.sina.clevercapitalist.view.FinancialGoals
-import xyz.sina.clevercapitalist.view.toMap
 
 class FirestoreRepository(private val db: FirebaseFirestore){
     suspend fun getDataFromFireStore(uid: String): List<RegisterInfo>{
@@ -26,6 +25,7 @@ class FirestoreRepository(private val db: FirebaseFirestore){
                 document.toObject(FinancialGoals::class.java)
             }
         }catch (e:Exception){
+            Log.e("FETCH_ERROR", "FETCH_ERROR is $e")
             emptyList()
         }
     }

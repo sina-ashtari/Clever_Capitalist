@@ -1,5 +1,6 @@
 package xyz.sina.clevercapitalist.view
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -68,15 +69,6 @@ import xyz.sina.clevercapitalist.model.RegisterInfo
 import xyz.sina.clevercapitalist.viewModel.DashboardViewModel
 import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 
-
-// someone says i should add some more categories like transport should be like this :
-//          -transport:
-//              -private : owned vehicle or motorcycle
-//                        -fee for oil and servicing
-//              -public :
-//                          - bus
-//
-
 @Composable
 fun Dashboard(navController: NavHostController) {
 
@@ -90,7 +82,7 @@ fun Dashboard(navController: NavHostController) {
 @Composable
 fun UserUI(
     data: State<List<RegisterInfo>>,
-    financialGoals: SnapshotStateList<FinancialGoals>,
+    financialGoalsList: SnapshotStateList<FinancialGoals>,
     navController: NavHostController
 ) {
 
@@ -236,16 +228,18 @@ fun UserUI(
                 ) {
                     Box(modifier = Modifier.fillMaxSize().padding(innerPadding)){
                         Column {
-                            financialGoals.forEachIndexed { index, financialGoals ->
+                            Text(color = MaterialTheme.colorScheme.onBackground, text = "THIS IS A TEXT")
+                            financialGoalsList.forEachIndexed { index, financialGoals ->
+                                Log.e("Error","goals: ${financialGoals.goal.text} ")
                                 Row(modifier = Modifier.fillMaxWidth()){
-                                    Text(color = MaterialTheme.colorScheme.onBackground,text = financialGoals.goal.text)
+
+                                    Text(color = MaterialTheme.colorScheme.onBackground,text = "This is a Goal ${financialGoals.goal.text}")
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
                                         .padding(4.dp)
                                         .drawBehind { drawOval(color = Color.Green) },text = financialGoals.moneyForGoal.text)
                                 }
                                 LinearProgressIndicator(progress = financialGoals.moneyForGoal.text.toFloat())
-
                             }
                         }
                     }

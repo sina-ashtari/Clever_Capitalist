@@ -11,15 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import xyz.sina.clevercapitalist.model.RegisterInfo
 import xyz.sina.clevercapitalist.view.FinancialGoals
-import xyz.sina.clevercapitalist.view.toMap
 import javax.inject.Inject
-
-fun FinancialGoals.toMap(): Map<String, Any> {
-    return mapOf(
-        "goal" to goal,
-        "moneyForGoal" to moneyForGoal
-    )
-}
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
@@ -36,6 +28,7 @@ class RegisterViewModel @Inject constructor(
                 try {
                     financialGoalsList.forEach {
                         val financialGoalsMap = it.toMap()
+                        Log.d("SAVING_GOAL", financialGoalsMap.toString())
                         fireStore.collection("users").document(uid).collection("goals").add(financialGoalsMap).addOnFailureListener {exception->
                             Log.e("CHECK","Error is : $exception")
                         }
