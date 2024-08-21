@@ -150,9 +150,9 @@ fun RegisterForm(navController: NavHostController){
             }
             financialGoalsList.forEachIndexed { index , financialGoals ->
                 Row(modifier = Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically){
-                    OutlinedTextField(modifier = Modifier.weight(1f),value = financialGoals.goal, label = {Text(color = MaterialTheme.colorScheme.onBackground, text = "Goal ${index+1}")} ,onValueChange = {newValue -> financialGoalsList[index] = financialGoalsList[index].copy(goal = newValue)})
+                    OutlinedTextField(modifier = Modifier.weight(1f),value = financialGoalsList[index].goal, label = {Text(color = MaterialTheme.colorScheme.onBackground, text = "Goal ${index+1}")} ,onValueChange = {newValue -> financialGoalsList[index] = financialGoalsList[index].copy(goal = newValue)})
                     Spacer(modifier = Modifier.width(14.dp))
-                    OutlinedTextField(modifier = Modifier.weight(1f),value = financialGoals.moneyForGoal, label = {Text(color = MaterialTheme.colorScheme.onBackground, text = "Money")},onValueChange = {newValue -> financialGoalsList[index] = financialGoalsList[index].copy(moneyForGoal = newValue)})
+                    OutlinedTextField(modifier = Modifier.weight(1f),value = financialGoalsList[index].moneyForGoal , label = {Text(color = MaterialTheme.colorScheme.onBackground, text = "Money")},onValueChange = {newValue -> financialGoalsList[index] = financialGoalsList[index].copy(moneyForGoal = newValue)})
                     IconButton(onClick = {
                         financialGoalsList.removeAt(index)
                     }) {
