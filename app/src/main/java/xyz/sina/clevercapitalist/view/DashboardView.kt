@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -43,6 +42,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -50,6 +50,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -78,13 +79,20 @@ import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 
 @Composable
 fun Dashboard(navController: NavHostController) {
+
     val viewModel : DashboardViewModel = hiltViewModel()
     val data = viewModel.data.collectAsState()
-    UserUI(data,navController)
+    val financialGoals = viewModel.financialGoalsList
+
+    UserUI(data,financialGoals,navController)
 }
 
 @Composable
-fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
+fun UserUI(
+    data: State<List<RegisterInfo>>,
+    financialGoals: SnapshotStateList<FinancialGoals>,
+    navController: NavHostController
+) {
 
     val realmViewModel : RealmViewModel = hiltViewModel()
     realmViewModel.loadRegisterInfo()
@@ -99,12 +107,9 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
 
     val density = LocalDensity.current
 
-    var monthlyVisibleTab by remember {
-        mutableStateOf(false)
-    }
-    var graphVisibleTab by remember {
-        mutableStateOf(false)
-    }
+    var monthlyVisibleTab by remember { mutableStateOf(false) }
+    var graphVisibleTab by remember { mutableStateOf(false) }
+    var goalsVisibleTab by remember { mutableStateOf(false) }
 
     Scaffold(modifier = Modifier,
         topBar = {
@@ -213,6 +218,40 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
                 }
             }
 
+            Column {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        goalsVisibleTab = !goalsVisibleTab
+                    }){
+                    Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(goalsVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
+                    Text(color = MaterialTheme.colorScheme.onBackground ,text ="Goals")
+                }
+                AnimatedVisibility(
+                    visible = goalsVisibleTab,
+                    enter = slideInVertically {
+                        with(density){ -40.dp.roundToPx() }
+                    } + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(initialAlpha = 0.3f),
+                    exit = slideOutVertically ()  + shrinkVertically() + fadeOut()
+                ) {
+                    Box(modifier = Modifier.fillMaxSize().padding(innerPadding)){
+                        Column {
+                            financialGoals.forEachIndexed { index, financialGoals ->
+                                Row(modifier = Modifier.fillMaxWidth()){
+                                    Text(color = MaterialTheme.colorScheme.onBackground,text = financialGoals.goal.text)
+                                    Spacer(modifier = Modifier.weight(1f))
+                                    Text(modifier = Modifier
+                                        .padding(4.dp)
+                                        .drawBehind { drawOval(color = Color.Green) },text = financialGoals.moneyForGoal.text)
+                                }
+                                LinearProgressIndicator(progress = financialGoals.moneyForGoal.text.toFloat())
+
+                            }
+                        }
+                    }
+                }
+            }
+
             val pieChartData = PieChartData(
                 plotType = PlotType.Pie,
                 slices = listOf(
@@ -233,7 +272,7 @@ fun UserUI(data: State<List<RegisterInfo>>, navController: NavHostController) {
 
             Column {
                 Row(modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .clickable { graphVisibleTab = !graphVisibleTab }){
                     Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(graphVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
                     Text(color = MaterialTheme.colorScheme.onBackground ,text ="Graph")
