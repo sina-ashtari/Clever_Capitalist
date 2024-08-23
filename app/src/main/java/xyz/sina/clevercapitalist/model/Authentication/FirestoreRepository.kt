@@ -18,10 +18,10 @@ class FirestoreRepository(private val db: FirebaseFirestore){
             emptyList()
         }
     }
-    suspend fun getGoalsFromFireStore(uid : String):List<FinancialGoals>{
+    suspend fun getGoalsFromFireStore(uid : String): List<FinancialGoals>{
         return try{
-            val snapshot = db.collection("users").document(uid).collection("goals").get().await()
-            snapshot.documents.mapNotNull { document ->
+            val snapshot = db.collection("users").document(uid).collection("goal").get().await()
+            snapshot.documents.mapNotNull {document ->
                 document.toObject(FinancialGoals::class.java)
             }
         }catch (e:Exception){
