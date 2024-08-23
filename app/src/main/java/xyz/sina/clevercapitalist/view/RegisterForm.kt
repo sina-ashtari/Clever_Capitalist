@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
@@ -52,18 +53,10 @@ import xyz.sina.clevercapitalist.viewModel.registerFormViewModel.RegisterViewMod
 
 // the issue is i send whole TextFieldValue right here, so change it to STRING OF IT !!!!
 data class FinancialGoals(
-    var goal : TextFieldValue = TextFieldValue(""),
-    var moneyForGoal : TextFieldValue = TextFieldValue("")
+    var goal : String = "",
+    var moneyForGoal : String = ""
 
-){
-    fun toMap(): Map<String, Any> {
-        return mapOf(
-            "goal" to goal,
-            "moneyForGoal" to moneyForGoal
-        )
-    }
-}
-
+)
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -75,8 +68,6 @@ fun RegisterForm(navController: NavHostController){
 
     val snackBarHostState = remember {SnackbarHostState()}
     val scope = rememberCoroutineScope()
-
-    val financialGoalsList = remember { mutableStateListOf<FinancialGoals>() }
 
     var userName by remember { mutableStateOf("") }
     var salary by remember { mutableStateOf("") }
@@ -117,7 +108,8 @@ fun RegisterForm(navController: NavHostController){
                         realmViewModel.addRegisterInfo(realmRegisterInfo)
                     }
 
-                    viewModel.saveRegisterInfo(userInfo,financialGoalsList)
+                    viewModel.saveRegisterInfo(userInfo)
+                    viewModel.saveGoalsData()
                     navController.navigate(Routes.DASHBOARD_ROUTE)
                 }
                     , colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary)
@@ -147,21 +139,20 @@ fun RegisterForm(navController: NavHostController){
             OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = otherExpenses, onValueChange = {otherExpenses = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Other expenses")})
             Button(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
                 onClick = {
-                    financialGoalsList.add(FinancialGoals())
+                    viewModel.addTextFieldPair()
                 }){
                 Text(color = MaterialTheme.colorScheme.onPrimary,text = "Do you have any financial goal? if do, click me!")
             }
-            financialGoalsList.forEachIndexed { index , financialGoals ->
-                Row(modifier = Modifier.fillMaxWidth() , verticalAlignment = Alignment.CenterVertically){
-                    OutlinedTextField(modifier = Modifier.weight(1f),value = financialGoalsList[index].goal, label = {Text(color = MaterialTheme.colorScheme.onBackground, text = "Goal ${index+1}")} ,onValueChange = {newValue -> financialGoalsList[index] = financialGoalsList[index].copy(goal = newValue)})
-                    Spacer(modifier = Modifier.width(14.dp))
-                    OutlinedTextField(modifier = Modifier.weight(1f),value = financialGoalsList[index].moneyForGoal , label = {Text(color = MaterialTheme.colorScheme.onBackground, text = "Money")},onValueChange = {newValue -> financialGoalsList[index] = financialGoalsList[index].copy(moneyForGoal = newValue)})
-                    IconButton(onClick = {
-                        financialGoalsList.removeAt(index)
-                    }) {
-                        Icon(imageVector = Icons.Default.Clear,tint  = MaterialTheme.colorScheme.onBackground, contentDescription = null)
+            viewModel.textFieldPairs.fastForEachIndexed { index, pair ->
+                val (goal, moneyForGoal) = pair
+                Row(modifier = Modifier.fillMaxWidth()){
+                    OutlinedTextField(value = goal, onValueChange = {newValue -> viewModel.updateTextFieldPair(index, newValue,moneyForGoal)}, label = {Text(text="Goal ${index+1}", color = MaterialTheme.colorScheme.onBackground)})
+                    OutlinedTextField(value = moneyForGoal, onValueChange = {newValue -> viewModel.updateTextFieldPair(index, goal ,newValue)}, label = {Text(text="money", color = MaterialTheme.colorScheme.onBackground)})
+                    IconButton(onClick = { viewModel.deleteTextFieldPair(index) }) {
+                        Icon(imageVector = Icons.Default.Clear, contentDescription = null)
                     }
                 }
+
             }
         }
     }

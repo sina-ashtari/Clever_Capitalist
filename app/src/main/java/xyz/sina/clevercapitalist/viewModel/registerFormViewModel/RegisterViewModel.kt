@@ -1,6 +1,7 @@
 package xyz.sina.clevercapitalist.viewModel.registerFormViewModel
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,22 +22,45 @@ class RegisterViewModel @Inject constructor(
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private val uid = currentUser?.uid
 
+    val textFieldPairs = mutableStateListOf<Pair<String,String>>()
 
-    fun saveRegisterInfo(registerInfo: RegisterInfo,financialGoalsList: List<FinancialGoals>){
-        if(uid != null){
+    fun addTextFieldPair(){
+        textFieldPairs.add("" to "")
+    }
+
+    fun updateTextFieldPair(index: Int, goal: String, moneyForGoal : String){
+        textFieldPairs[index] = goal to moneyForGoal
+    }
+
+    fun deleteTextFieldPair(index: Int){
+        if(index in textFieldPairs.indices){
+            textFieldPairs.removeAt(index)
+        }
+    }
+
+    fun saveGoalsData(){
+        if(uid!=null){
             viewModelScope.launch {
-                try {
-                    financialGoalsList.forEach {
-                        val financialGoalsMap = it.toMap()
-                        Log.d("SAVING_GOAL", financialGoalsMap.toString())
-                        fireStore.collection("users").document(uid).collection("goals").add(financialGoalsMap).addOnFailureListener {exception->
-                            Log.e("CHECK","Error is : $exception")
-                        }
-                    }
-                }catch (e:Exception){
-                    Log.e("CHECK","Error is : $e")
+                val batch = fireStore.batch()
+
+                textFieldPairs.forEach {(goal, moneyForGoal)->
+                    val goalsData = hashMapOf("goal" to goal, "moneyForGoal" to moneyForGoal)
+                    val docRef = fireStore.collection("users").document(uid).collection("goal").document()
+
+                    batch.set(docRef,goalsData)
+                }
+
+                batch.commit().addOnSuccessListener {
+                    Log.e("SAVE_GOALS_TO_FIRESTORE","WORKED")
+                }.addOnFailureListener {exception ->
+                    Log.e("SAVE_GOALS_TO_FIRESTORE","ERROR IS : $exception")
                 }
             }
+        }
+    }
+
+    fun saveRegisterInfo(registerInfo: RegisterInfo){
+        if(uid != null){
             viewModelScope.launch {
                 try {
                     fireStore.collection("users").document(uid).collection("register_info").add(registerInfo).addOnFailureListener { exception ->
