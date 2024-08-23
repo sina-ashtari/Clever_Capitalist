@@ -1,6 +1,5 @@
 package xyz.sina.clevercapitalist.view
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -43,7 +42,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -51,7 +49,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -74,15 +71,15 @@ fun Dashboard(navController: NavHostController) {
 
     val viewModel : DashboardViewModel = hiltViewModel()
     val data = viewModel.data.collectAsState()
-    val financialGoals = viewModel.financialGoalsList
+    val goalPairs by viewModel.goalsPair.collectAsState()
 
-    UserUI(data,financialGoals,navController)
+    UserUI(data,goalPairs,navController)
 }
 
 @Composable
 fun UserUI(
     data: State<List<RegisterInfo>>,
-    financialGoalsList: SnapshotStateList<FinancialGoals>,
+    goalPairs: List<FinancialGoals>,
     navController: NavHostController
 ) {
 
@@ -226,21 +223,18 @@ fun UserUI(
                     } + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(initialAlpha = 0.3f),
                     exit = slideOutVertically ()  + shrinkVertically() + fadeOut()
                 ) {
-                    Box(modifier = Modifier.fillMaxSize().padding(innerPadding)){
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)){
                         Column {
-                            Text(color = MaterialTheme.colorScheme.onBackground, text = "THIS IS A TEXT")
-                            financialGoalsList.forEachIndexed { index, financialGoals ->
-                                Log.e("Error","goals: ${financialGoals.goal.text} ")
+                            goalPairs.forEachIndexed { _, pair ->
                                 Row(modifier = Modifier.fillMaxWidth()){
-
-                                    Text(color = MaterialTheme.colorScheme.onBackground,text = "This is a Goal ${financialGoals.goal.text}")
+                                    Text(color = MaterialTheme.colorScheme.onBackground,text = pair.goal)
                                     Spacer(modifier = Modifier.weight(1f))
-                                    Text(modifier = Modifier
-                                        .padding(4.dp)
-                                        .drawBehind { drawOval(color = Color.Green) },text = financialGoals.moneyForGoal.text)
+                                    Text(color = MaterialTheme.colorScheme.onBackground,text = pair.moneyForGoal)
                                 }
-                                LinearProgressIndicator(progress = financialGoals.moneyForGoal.text.toFloat())
                             }
+
                         }
                     }
                 }

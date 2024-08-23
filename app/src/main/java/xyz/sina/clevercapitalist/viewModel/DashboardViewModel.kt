@@ -22,7 +22,8 @@ class DashboardViewModel @Inject constructor(
     private val _data = MutableStateFlow<List<RegisterInfo>>(emptyList())
     val data : StateFlow<List<RegisterInfo>> = _data
 
-    var financialGoalsList = mutableStateListOf<FinancialGoals>()
+    private val _goalsPair = MutableStateFlow<List<FinancialGoals>>(emptyList())
+    val goalsPair : StateFlow<List<FinancialGoals>>  = _goalsPair
 
     init {
         fetchData()
@@ -31,17 +32,17 @@ class DashboardViewModel @Inject constructor(
     private fun fetchData(){
         val currentUser = FirebaseAuth.getInstance().currentUser
         val uid = currentUser?.uid
+
         if(uid != null){
             viewModelScope.launch {
                 val result = repository.getDataFromFireStore(uid)
                 _data.value = result
             }
             viewModelScope.launch {
-                val goals = repository.getGoalsFromFireStore(uid)
-                Log.d("FETCHED_GOALS", goals.toString())
-                financialGoalsList.clear()
-                financialGoalsList.addAll(goals)
+                val pairs = repository.getGoalsFromFireStore(uid)
+                _goalsPair.value = pairs
             }
+
         }else{
             _data.value = emptyList()
         }
