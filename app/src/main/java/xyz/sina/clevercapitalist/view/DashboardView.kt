@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Button
@@ -46,15 +47,21 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import co.yml.charts.common.model.PlotType
@@ -62,6 +69,7 @@ import co.yml.charts.ui.piechart.charts.PieChart
 import co.yml.charts.ui.piechart.models.PieChartConfig
 import co.yml.charts.ui.piechart.models.PieChartData
 import com.google.firebase.auth.FirebaseAuth
+import xyz.sina.clevercapitalist.model.FinancialGoals
 import xyz.sina.clevercapitalist.model.RegisterInfo
 import xyz.sina.clevercapitalist.viewModel.DashboardViewModel
 import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
@@ -71,7 +79,7 @@ fun Dashboard(navController: NavHostController) {
 
     val viewModel : DashboardViewModel = hiltViewModel()
     val data = viewModel.data.collectAsState()
-    val goalPairs by viewModel.goalsPair.collectAsState()
+    val goalPairs by viewModel.goalsData.observeAsState(emptyList())
 
     UserUI(data,goalPairs,navController)
 }
@@ -135,12 +143,36 @@ fun UserUI(
                 }
             }
 
-            Column {
+            Column() {
+                if(leftOver >= 0.0){
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .clip(shape = RoundedCornerShape(8.dp))
+                        .background(color = MaterialTheme.colorScheme.secondary)){
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)){
+                            Column {
+                                Text(color = MaterialTheme.colorScheme.onSecondary, text = "$ $leftOver", fontSize = 20.sp, style = TextStyle(fontWeight = FontWeight.SemiBold))
+                                Text(color = MaterialTheme.colorScheme.onSecondary, text = "Ready to assign")
+                            }
+                            Spacer(modifier = Modifier.weight(1f))
+                            Column {
+                                Button(colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.secondaryContainer),onClick = {  }) {
+                                    Text(color = MaterialTheme.colorScheme.onSecondaryContainer,text = "Assign Money")
+                                }
+                            }
+                        }
+                    }
+                }
+
                 Row(modifier = Modifier
                     .fillMaxSize()
+                    .padding(8.dp)
                     .clickable { monthlyVisibleTab = !monthlyVisibleTab }){
                     Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(monthlyVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
-                    Text(color = MaterialTheme.colorScheme.onBackground ,text ="Monthly")
+                    Text(color = MaterialTheme.colorScheme.onBackground ,text ="Monthly", fontSize = 20.sp)
                 }
                 AnimatedVisibility(
                     visible = monthlyVisibleTab,
@@ -149,57 +181,81 @@ fun UserUI(
                     } + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(initialAlpha = 0.3f),
                     exit = slideOutVertically ()  + shrinkVertically() + fadeOut()
                     ) {
-                    Column(modifier = Modifier.padding(start = 20.dp , end = 20.dp)){
-                        Row(modifier =  Modifier.fillMaxWidth()){
+
+                    Column(modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp)
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colorScheme.surfaceBright)){
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)){
                             Column {
-                                Row(modifier = Modifier.fillMaxWidth()){
+                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
                                     //Icon(imageVector =  , contentDescription = null ) add house icon
                                     Text(text = "Mortgage")
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
-                                        .padding(4.dp)
-                                        .drawBehind { drawOval(color = Color.Green) },text = "$$houseRent")
+                                        .padding(8.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            shape = RoundedCornerShape(8.dp)
+                                        ),text = "$$houseRent", color = MaterialTheme.colorScheme.onPrimary)
                                 }
-                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = houseRent)
+                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = houseRent ,color = MaterialTheme.colorScheme.secondary)
                             }
                         }
-                        Row(modifier =  Modifier.fillMaxWidth()){
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)){
                             Column {
-                                Row(modifier = Modifier.fillMaxWidth()){
+                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
                                     //Icon(imageVector =  , contentDescription = null ) add transit icon
                                     Text(text = "transport")
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
-                                        .padding(4.dp)
-                                        .drawBehind { drawOval(color = Color.Green) },text = "$$transport")
+                                        .padding(8.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            shape = RoundedCornerShape(8.dp)
+                                        ),text = "$$transport", color = MaterialTheme.colorScheme.onPrimary)
                                 }
-                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = transport)
+                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = transport,color = MaterialTheme.colorScheme.secondary)
                             }
                         }
-                        Row(modifier =  Modifier.fillMaxWidth()){
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)){
                             Column {
-                                Row(modifier = Modifier.fillMaxWidth()){
+                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
                                     //Icon(imageVector =  , contentDescription = null ) add house icon
                                     Text(text = "debts")
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
-                                        .padding(4.dp)
-                                        .drawBehind { drawOval(color = Color.Green) },text = "$$debts")
+                                        .padding(8.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            shape = RoundedCornerShape(8.dp)
+                                        ),text = "$$debts", color = MaterialTheme.colorScheme.onPrimary)
                                 }
-                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = debts)
+                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = debts, color = MaterialTheme.colorScheme.secondary)
                             }
                         }
-                        Row(modifier =  Modifier.fillMaxWidth()){
+                        Row(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)){
                             Column {
-                                Row(modifier = Modifier.fillMaxWidth()){
+                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
                                     //Icon(imageVector =  , contentDescription = null ) add house icon
                                     Text(text = "Other Expenses")
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
-                                        .padding(4.dp)
-                                        .drawBehind { drawOval(color = Color.Green) },text = "$$otherExpenses")
+                                        .padding(8.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            shape = RoundedCornerShape(8.dp)
+                                        ),text = "$$otherExpenses", color = MaterialTheme.colorScheme.onPrimary)
                                 }
-                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = otherExpenses)
+                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = otherExpenses,color = MaterialTheme.colorScheme.secondary)
                             }
                         }
                     }
@@ -210,11 +266,12 @@ fun UserUI(
             Column {
                 Row(modifier = Modifier
                     .fillMaxWidth()
+                    .padding(8.dp)
                     .clickable {
                         goalsVisibleTab = !goalsVisibleTab
                     }){
                     Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(goalsVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
-                    Text(color = MaterialTheme.colorScheme.onBackground ,text ="Goals")
+                    Text(color = MaterialTheme.colorScheme.onBackground ,text ="Goals", fontSize = 20.sp)
                 }
                 AnimatedVisibility(
                     visible = goalsVisibleTab,
@@ -226,13 +283,19 @@ fun UserUI(
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)){
-                        Column {
+                        Column (modifier = Modifier.padding(start = 20.dp,end = 20.dp)){
                             goalPairs.forEachIndexed { _, pair ->
-                                Row(modifier = Modifier.fillMaxWidth()){
+                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
                                     Text(color = MaterialTheme.colorScheme.onBackground,text = pair.goal)
                                     Spacer(modifier = Modifier.weight(1f))
-                                    Text(color = MaterialTheme.colorScheme.onBackground,text = pair.moneyForGoal)
+                                    Text(modifier = Modifier
+                                        .padding(8.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            shape = RoundedCornerShape(8.dp)
+                                        ),color = MaterialTheme.colorScheme.onPrimary,text = "$ ${pair.moneyForGoal}")
                                 }
+                                LinearProgressIndicator(progress = pair.assignedMoney.toFloat() / pair.moneyForGoal.toFloat(), color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
 
                         }
@@ -261,9 +324,10 @@ fun UserUI(
             Column {
                 Row(modifier = Modifier
                     .fillMaxWidth()
+                    .padding(8.dp)
                     .clickable { graphVisibleTab = !graphVisibleTab }){
                     Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(graphVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
-                    Text(color = MaterialTheme.colorScheme.onBackground ,text ="Graph")
+                    Text(color = MaterialTheme.colorScheme.onBackground ,text ="Graph", fontSize = 20.sp)
                 }
                 AnimatedVisibility(
                     visible = graphVisibleTab,

@@ -1,7 +1,6 @@
 package xyz.sina.clevercapitalist.viewModel.registerFormViewModel
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +10,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import xyz.sina.clevercapitalist.model.RegisterInfo
-import xyz.sina.clevercapitalist.view.FinancialGoals
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,38 +20,46 @@ class RegisterViewModel @Inject constructor(
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private val uid = currentUser?.uid
 
-    val textFieldPairs = mutableStateListOf<Pair<String,String>>()
 
-    fun addTextFieldPair(){
-        textFieldPairs.add("" to "")
+    private val _goalsPair  = MutableLiveData<List<Pair<String , String >>>(emptyList())
+    val goalsPair : LiveData<List<Pair<String, String>>> = _goalsPair
+
+    fun addTextField(){
+        _goalsPair.value = _goalsPair.value.orEmpty() + ("" to "")
     }
 
-    fun updateTextFieldPair(index: Int, goal: String, moneyForGoal : String){
-        textFieldPairs[index] = goal to moneyForGoal
+    fun updateTextField(index : Int, goal : String, moneyForGoal : String){
+        _goalsPair.value = _goalsPair.value.orEmpty().toMutableList().also {
+            it[index] =  goal to moneyForGoal
+        }
     }
 
-    fun deleteTextFieldPair(index: Int){
-        if(index in textFieldPairs.indices){
-            textFieldPairs.removeAt(index)
+    fun deleteTextField(index : Int){
+        _goalsPair.value = _goalsPair.value.orEmpty().toMutableList().also {
+            if ( index in it.indices){
+                it.removeAt(index)
+            }
         }
     }
 
     fun saveGoalsData(){
-        if(uid!=null){
-            viewModelScope.launch {
-                val batch = fireStore.batch()
-
-                textFieldPairs.forEach {(goal, moneyForGoal)->
-                    val goalsData = hashMapOf("goal" to goal, "moneyForGoal" to moneyForGoal)
+        viewModelScope.launch {
+            val goalsData = _goalsPair.value.orEmpty().map {(goal, moneyForGoal) ->
+                mapOf(
+                    "goal" to goal,
+                    "moneyForGoal" to moneyForGoal,
+                    "assignedMoney" to 0.0
+                )
+            }
+            val batch = fireStore.batch()
+            if(uid != null){
+                goalsData.forEach { data ->
                     val docRef = fireStore.collection("users").document(uid).collection("goal").document()
-
-                    batch.set(docRef,goalsData)
+                    batch.set(docRef, data)
                 }
-
-                batch.commit().addOnSuccessListener {
-                    Log.e("SAVE_GOALS_TO_FIRESTORE","WORKED")
-                }.addOnFailureListener {exception ->
-                    Log.e("SAVE_GOALS_TO_FIRESTORE","ERROR IS : $exception")
+                // you could use addOnCompleteListener for better error showing in future
+                batch.commit().addOnFailureListener{exception ->
+                    Log.e("SAVE_GOALS_TO_FIRESTORE", "ERROR IS : ${exception.message}")
                 }
             }
         }
