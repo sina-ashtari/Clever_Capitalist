@@ -2,10 +2,10 @@ package xyz.sina.clevercapitalist.model.Authentication
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
+import xyz.sina.clevercapitalist.model.FinancialGoals
 import xyz.sina.clevercapitalist.model.RegisterInfo
-import xyz.sina.clevercapitalist.view.FinancialGoals
+
 
 class FirestoreRepository(private val db: FirebaseFirestore){
     suspend fun getDataFromFireStore(uid: String): List<RegisterInfo>{
