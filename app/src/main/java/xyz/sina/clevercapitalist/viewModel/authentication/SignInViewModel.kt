@@ -1,5 +1,8 @@
 package xyz.sina.clevercapitalist.viewModel.authentication
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -18,6 +21,13 @@ class SignInViewModel @Inject constructor(
     private val _signInState = MutableLiveData<Result<FirebaseUser?>>()
     val signInState : MutableLiveData<Result<FirebaseUser?>> = _signInState
 
+    var password by mutableStateOf("")
+        private set
+    var email by  mutableStateOf("")
+        private set
+
+    fun changePassword(value : String) = run { password = value }
+    fun changeEmail(value : String) = run { email = value }
 
 
     fun signIn(email : String , password : String){
