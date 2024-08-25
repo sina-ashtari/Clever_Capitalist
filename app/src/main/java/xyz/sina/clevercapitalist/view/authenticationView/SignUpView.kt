@@ -2,6 +2,7 @@ package xyz.sina.clevercapitalist.view.authenticationView
 
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,14 +13,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
-import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Clear
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -30,12 +35,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import xyz.sina.clevercapitalist.R
@@ -56,8 +63,9 @@ fun SignUpView(navController: NavHostController) {
     val signUpState by viewModel.signUpState.observeAsState()
     val gisState by gisViewModel.gisState
 
-    val email = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
+
+
+    val passwordError by viewModel.passwordError.collectAsStateWithLifecycle()
 
     val snackBarHostState = remember {
         SnackbarHostState()
@@ -88,11 +96,30 @@ fun SignUpView(navController: NavHostController) {
                 HorizontalDivider(modifier = Modifier.weight(1f),thickness = 1.dp,color = MaterialTheme.colorScheme.onBackground)
             }
 
-            OutlinedTextField(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),value = email.value, onValueChange = {email.value = it}, label= {Text(text = "Email", color = MaterialTheme.colorScheme.onBackground)})
+            OutlinedTextField(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp), singleLine = true ,value = viewModel.email , onValueChange = viewModel::changeEmail, label= {Text(text = "Email", color = MaterialTheme.colorScheme.onBackground)})
             Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),value = password.value, onValueChange = {password.value = it}, visualTransformation = PasswordVisualTransformation() ,label = {Text("Password", color = MaterialTheme.colorScheme.onBackground)})
+            OutlinedTextField(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp), singleLine = true,value = viewModel.password , onValueChange = viewModel::changePassword, visualTransformation = PasswordVisualTransformation() ,label = {Text("Password", color = MaterialTheme.colorScheme.onBackground)}, isError = !passwordError.successful)
             Spacer(modifier = Modifier.height(16.dp))
-            Button(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),colors = androidx.compose.material.ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),onClick = {viewModel.signUp(email = email.value, password = password.value)}) {
+            passwordConditionRow(
+                condition = "Minimum 8 characters",
+                checked = passwordError.hasMinimum
+            )
+            passwordConditionRow(
+                condition = "Minimum 1 special character",
+                checked = passwordError.hasSpecialChar
+            )
+            passwordConditionRow(
+                condition = "Minimum 1 capitalized letter",
+                checked = passwordError.hasCapitalizedLetter
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),colors = androidx.compose.material.ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),onClick = {if(!passwordError.successful){viewModel.signUp(email = viewModel.email, password = viewModel.password)}else{scope.launch { snackBarHostState.showSnackbar("Invalid password type") }} }) {
                 Text(text = "Sign up", color = MaterialTheme.colorScheme.onPrimary)
             }
 
@@ -114,5 +141,23 @@ fun SignUpView(navController: NavHostController) {
 
         }
 
+    }
+}
+
+@Composable
+fun passwordConditionRow(
+    condition : String ,
+    checked : Boolean
+){
+    val color by animateColorAsState(
+        targetValue = if ( checked ) Color.Green else MaterialTheme.colorScheme.error,
+        label = "text color"
+    )
+    val icon = if ( checked ) Icons.Rounded.Check else Icons.Rounded.Close
+
+    Row(modifier = Modifier.fillMaxWidth().padding(8.dp), verticalAlignment = Alignment.CenterVertically){
+        Icon(imageVector = icon , contentDescription = null, tint = color)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = condition, color = color)
     }
 }
