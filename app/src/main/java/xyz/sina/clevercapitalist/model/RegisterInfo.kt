@@ -22,3 +22,9 @@ class RealmRegisterInfo: RealmObject{
     var dbDebts : Double = 0.0
     var dbOtherExpenses : Double = 0.0
 }
+
+data class FinancialGoals(
+    var goal : String = "",
+    var moneyForGoal : String = "",
+    var assignedMoney : Double = 0.0
+)
