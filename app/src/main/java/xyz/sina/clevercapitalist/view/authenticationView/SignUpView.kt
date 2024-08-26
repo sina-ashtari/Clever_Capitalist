@@ -104,15 +104,15 @@ fun SignUpView(navController: NavHostController) {
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp), singleLine = true,value = viewModel.password , onValueChange = viewModel::changePassword, visualTransformation = PasswordVisualTransformation() ,label = {Text("Password", color = MaterialTheme.colorScheme.onBackground)}, isError = !passwordError.successful)
             Spacer(modifier = Modifier.height(16.dp))
-            passwordConditionRow(
+            PasswordConditionRow(
                 condition = "Minimum 8 characters",
                 checked = passwordError.hasMinimum
             )
-            passwordConditionRow(
+            PasswordConditionRow(
                 condition = "Minimum 1 special character",
                 checked = passwordError.hasSpecialChar
             )
-            passwordConditionRow(
+            PasswordConditionRow(
                 condition = "Minimum 1 capitalized letter",
                 checked = passwordError.hasCapitalizedLetter
             )
@@ -145,7 +145,7 @@ fun SignUpView(navController: NavHostController) {
 }
 
 @Composable
-fun passwordConditionRow(
+fun PasswordConditionRow(
     condition : String ,
     checked : Boolean
 ){

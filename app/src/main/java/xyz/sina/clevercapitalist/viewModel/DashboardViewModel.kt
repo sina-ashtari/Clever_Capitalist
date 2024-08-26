@@ -1,7 +1,8 @@
 package xyz.sina.clevercapitalist.viewModel
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -24,11 +25,11 @@ class DashboardViewModel @Inject constructor(
     private val _data = MutableStateFlow<List<RegisterInfo>>(emptyList())
     val data : StateFlow<List<RegisterInfo>> = _data
 
-
-
-
     private val _goalsData = MutableLiveData<List<FinancialGoals>>()
     val goalsData : LiveData<List<FinancialGoals>> = _goalsData
+
+    private var _error by mutableStateOf("")
+    var error = _error
 
     init {
         fetchData()
@@ -39,18 +40,22 @@ class DashboardViewModel @Inject constructor(
         val uid = currentUser?.uid
 
         if(uid != null){
-            viewModelScope.launch {
-                val result = repository.getDataFromFireStore(uid)
-                _data.value = result
+            try {
+                viewModelScope.launch {
+                    val result = repository.getDataFromFireStore(uid)
+                    _data.value = result
+                }
+                viewModelScope.launch {
+                    val result = repository.getGoalsFromFireStore(uid)
+                    _goalsData.value = result
+                }
+            }catch (e:Exception){
+                _error = e.message.toString()
+                error = _error
             }
-            viewModelScope.launch {
-                val result = repository.getGoalsFromFireStore(uid)
-                _goalsData.value = result
-
-            }
-
         }else{
             _data.value = emptyList()
+            error = "Please Re-login again."
         }
     }
 

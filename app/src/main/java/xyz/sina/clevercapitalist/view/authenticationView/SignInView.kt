@@ -64,7 +64,7 @@ fun SignInView(navController: NavHostController) {
                     navController.navigate(Routes.DASHBOARD_ROUTE)
                 }
                 result.isFailure ->{
-                    scope.launch { snackBarHostState.showSnackbar("try again") }
+                    scope.launch { snackBarHostState.showSnackbar(viewModel.error) }
                 }
             }
         }
