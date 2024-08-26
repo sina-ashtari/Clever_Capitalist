@@ -1,6 +1,10 @@
 package xyz.sina.clevercapitalist.viewModel.registerFormViewModel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +24,25 @@ class RegisterViewModel @Inject constructor(
     private val currentUser = FirebaseAuth.getInstance().currentUser
     private val uid = currentUser?.uid
 
+    var userName by  mutableStateOf("")
+        private set
+    var salary by   mutableStateOf("")
+        private set
+    var rent by   mutableStateOf("")
+        private set
+    var transport by   mutableStateOf("")
+        private set
+    var debts by   mutableStateOf("")
+        private set
+    var otherExpenses by   mutableStateOf("")
+        private set
+
+    fun changeUserName(value : String) = run { userName = value }
+    fun changeSalary(value : String) = run { salary = value }
+    fun changeRent(value : String) = run { rent = value }
+    fun changeTransport(value : String) = run { transport = value }
+    fun changeDebts(value : String) = run { debts = value }
+    fun changeOtherExpenses(value : String) = run { otherExpenses = value }
 
     private val _goalsPair  = MutableLiveData<List<Pair<String , String >>>(emptyList())
     val goalsPair : LiveData<List<Pair<String, String>>> = _goalsPair

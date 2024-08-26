@@ -67,12 +67,7 @@ fun RegisterForm(navController: NavHostController){
     val snackBarHostState = remember {SnackbarHostState()}
     val scope = rememberCoroutineScope()
 
-    var userName by remember { mutableStateOf("") }
-    var salary by remember { mutableStateOf("") }
-    var rent by remember { mutableStateOf("") }
-    var transport by remember { mutableStateOf("") }
-    var debts by remember { mutableStateOf("") }
-    var otherExpenses by remember { mutableStateOf("") }
+
 
     Scaffold(snackbarHost = {
         SnackbarHost(hostState = snackBarHostState)
@@ -86,22 +81,22 @@ fun RegisterForm(navController: NavHostController){
 
                 Button(onClick = {
                     val userInfo = RegisterInfo(
-                        userName = userName ,
-                        salary = salary.toDoubleOrNull() ?: 0.0,
-                        houseRent = rent.toDoubleOrNull() ?: 0.0,
-                        transport = transport.toDoubleOrNull() ?: 0.0,
-                        debts = debts.toDoubleOrNull() ?: 0.0,
-                        otherExpenses = otherExpenses.toDoubleOrNull() ?: 0.0
+                        userName = viewModel.userName ,
+                        salary = viewModel.salary.toDoubleOrNull() ?: 0.0,
+                        houseRent = viewModel.rent.toDoubleOrNull() ?: 0.0,
+                        transport = viewModel.transport.toDoubleOrNull() ?: 0.0,
+                        debts = viewModel.debts.toDoubleOrNull() ?: 0.0,
+                        otherExpenses = viewModel.otherExpenses.toDoubleOrNull() ?: 0.0
                     )
 
                     scope.launch {
                         val realmRegisterInfo = RealmRegisterInfo().apply {
-                            dbUserName = userName
-                            dbSalary = salary.toDoubleOrNull() ?: 0.0
-                            dbHouseRent = rent.toDoubleOrNull() ?: 0.0
-                            dbTransport = transport.toDoubleOrNull() ?: 0.0
-                            dbDebts = debts.toDoubleOrNull() ?: 0.0
-                            dbOtherExpenses = otherExpenses.toDoubleOrNull() ?: 0.0
+                            dbUserName = viewModel.userName
+                            dbSalary = viewModel.salary.toDoubleOrNull() ?: 0.0
+                            dbHouseRent = viewModel.rent.toDoubleOrNull() ?: 0.0
+                            dbTransport = viewModel.transport.toDoubleOrNull() ?: 0.0
+                            dbDebts = viewModel.debts.toDoubleOrNull() ?: 0.0
+                            dbOtherExpenses = viewModel.otherExpenses.toDoubleOrNull() ?: 0.0
                         }
                         realmViewModel.addRegisterInfo(realmRegisterInfo)
                     }
@@ -123,18 +118,18 @@ fun RegisterForm(navController: NavHostController){
             .verticalScroll(rememberScrollState())
             .fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Please enter your name")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth(), maxLines = 1 ,value = userName, onValueChange = {userName = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Name")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(), maxLines = 1 ,value = viewModel.userName, onValueChange = viewModel::changeUserName , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Name")})
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Please enter your monthly salary")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = salary, onValueChange = {salary = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Salary")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.salary, onValueChange = viewModel::changeSalary , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Salary")})
             // IDK now how to implement these in country which everything changes in seconds
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How about your house ?")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = rent, onValueChange = {rent = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Rent")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.rent, onValueChange = viewModel::changeRent, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Rent")})
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How much money do you spend to get around?")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = transport, onValueChange = {transport = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly transport")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.transport, onValueChange = viewModel::changeTransport , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly transport")})
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Do you currently have any debt?")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = debts, onValueChange = {debts = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="debts")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.debts, onValueChange = viewModel::changeDebts , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="debts")})
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How much money do you spend on other things like Internet, Phone, Groceries , etc.?")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = otherExpenses, onValueChange = {otherExpenses = it }, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Other expenses")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.otherExpenses, onValueChange = viewModel::changeOtherExpenses, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Other expenses")})
             Box{
                 // imma gonna add some more brighter background just for goal tab
                 Column {
