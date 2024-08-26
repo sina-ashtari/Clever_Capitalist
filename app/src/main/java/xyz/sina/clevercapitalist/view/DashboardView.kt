@@ -28,6 +28,8 @@ import androidx.compose.material.ButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -43,6 +45,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
@@ -50,16 +53,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -69,6 +71,7 @@ import co.yml.charts.ui.piechart.charts.PieChart
 import co.yml.charts.ui.piechart.models.PieChartConfig
 import co.yml.charts.ui.piechart.models.PieChartData
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 import xyz.sina.clevercapitalist.model.FinancialGoals
 import xyz.sina.clevercapitalist.model.RegisterInfo
 import xyz.sina.clevercapitalist.viewModel.DashboardViewModel
@@ -80,16 +83,24 @@ fun Dashboard(navController: NavHostController) {
     val viewModel : DashboardViewModel = hiltViewModel()
     val data = viewModel.data.collectAsState()
     val goalPairs by viewModel.goalsData.observeAsState(emptyList())
+    val error = viewModel.error
 
-    UserUI(data,goalPairs,navController)
+    UserUI(data,goalPairs,navController,error)
 }
 
 @Composable
 fun UserUI(
     data: State<List<RegisterInfo>>,
     goalPairs: List<FinancialGoals>,
-    navController: NavHostController
+    navController: NavHostController,
+    error: String
 ) {
+
+    val snackBarHostState = remember {
+        SnackbarHostState()
+    }
+    
+    val snackBarScope = rememberCoroutineScope()
 
     val realmViewModel : RealmViewModel = hiltViewModel()
     realmViewModel.loadRegisterInfo()
@@ -110,11 +121,14 @@ fun UserUI(
 
     Scaffold(modifier = Modifier,
         topBar = {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
-                Spacer(modifier = Modifier.weight(1f))
-                TopAppBar( backgroundColor = MaterialTheme.colorScheme.surfaceTint ,title = {DropDownMenu(navController = navController)})
+            TopAppBar(backgroundColor = MaterialTheme.colorScheme.surfaceTint) {
+                Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
+                    Spacer(modifier = Modifier.weight(1f))
+                    DropDownMenu(navController = navController)
+                }
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackBarHostState)}
     ){innerPadding ->
 
         Column(modifier = Modifier
@@ -123,7 +137,7 @@ fun UserUI(
             .background(
                 MaterialTheme.colorScheme.background
             )) {
-            if (data.value.isEmpty()){
+            if (data.value.isNotEmpty()){
                 data.value.forEach { item ->
                     userName.value = item.userName
                     debts = item.debts.toFloat()
@@ -133,14 +147,21 @@ fun UserUI(
                     leftOver = if(item.salary.toFloat() - (debts + transport + houseRent + otherExpenses) < 0 ) 0f else (item.salary.toFloat() - (debts + transport + houseRent + otherExpenses))
                 }
             }else{
-                realmRegisterInfo.value.forEach{ item ->
-                    userName.value = item.dbUserName
-                    debts = item.dbDebts.toFloat()
-                    transport = item.dbTransport.toFloat()
-                    houseRent = item.dbHouseRent.toFloat()
-                    otherExpenses = item.dbOtherExpenses.toFloat()
-                    leftOver = if(item.dbSalary.toFloat() - (debts + transport + houseRent + otherExpenses) < 0 ) 0f else (item.dbSalary.toFloat() - (debts + transport + houseRent + otherExpenses))
+                if(realmRegisterInfo.value.isNotEmpty()){
+                    realmRegisterInfo.value.forEach{ item ->
+                        userName.value = item.dbUserName
+                        debts = item.dbDebts.toFloat()
+                        transport = item.dbTransport.toFloat()
+                        houseRent = item.dbHouseRent.toFloat()
+                        otherExpenses = item.dbOtherExpenses.toFloat()
+                        leftOver = if(item.dbSalary.toFloat() - (debts + transport + houseRent + otherExpenses) < 0 ) 0f else (item.dbSalary.toFloat() - (debts + transport + houseRent + otherExpenses))
+                    }
+                }else{
+                    LaunchedEffect(Unit) {
+                        snackBarScope.launch { snackBarHostState.showSnackbar(error) }
+                    }
                 }
+
             }
 
             Column() {
@@ -183,7 +204,6 @@ fun UserUI(
                     ) {
 
                     Column(modifier = Modifier
-                        .padding(start = 20.dp, end = 20.dp)
                         .fillMaxWidth()
                         .background(color = MaterialTheme.colorScheme.surfaceBright)){
                         Row(modifier = Modifier
