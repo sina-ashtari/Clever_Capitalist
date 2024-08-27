@@ -6,4 +6,5 @@ object Routes {
     const val MAIN_ROUTE : String  = "MainView"
     const val DASHBOARD_ROUTE : String = "Dashboard"
     const val REGISTER_FORM: String = "RegisterForm"
+    const val ASSIGN_MONEY : String = "AssignView"
 }
