@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Button
@@ -34,17 +35,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
@@ -120,16 +117,16 @@ fun RegisterForm(navController: NavHostController){
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Please enter your name")
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), maxLines = 1 ,value = viewModel.userName, onValueChange = viewModel::changeUserName , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Name")})
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Please enter your monthly salary")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.salary, onValueChange = viewModel::changeSalary , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Salary")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) ,value = viewModel.salary, onValueChange = viewModel::changeSalary , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Salary")})
             // IDK now how to implement these in country which everything changes in seconds
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How about your house ?")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.rent, onValueChange = viewModel::changeRent, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Rent")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) ,value = viewModel.rent, onValueChange = viewModel::changeRent, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly Rent")})
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How much money do you spend to get around?")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.transport, onValueChange = viewModel::changeTransport , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly transport")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) ,value = viewModel.transport, onValueChange = viewModel::changeTransport , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Monthly transport")})
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="Do you currently have any debt?")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.debts, onValueChange = viewModel::changeDebts , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="debts")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) ,value = viewModel.debts, onValueChange = viewModel::changeDebts , label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="debts")})
             Text(textAlign = TextAlign.Center ,color = MaterialTheme.colorScheme.onBackground ,text="How much money do you spend on other things like Internet, Phone, Groceries , etc.?")
-            OutlinedTextField(modifier = Modifier.fillMaxWidth() ,value = viewModel.otherExpenses, onValueChange = viewModel::changeOtherExpenses, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Other expenses")})
+            OutlinedTextField(modifier = Modifier.fillMaxWidth(), keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number) ,value = viewModel.otherExpenses, onValueChange = viewModel::changeOtherExpenses, label = {Text(color = MaterialTheme.colorScheme.onBackground ,text="Other expenses")})
             Box{
                 // imma gonna add some more brighter background just for goal tab
                 Column {
@@ -143,7 +140,7 @@ fun RegisterForm(navController: NavHostController){
                         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
                             OutlinedTextField(modifier = Modifier.weight(1f),value = pair.first , onValueChange = {newValue -> viewModel.updateTextField(index , newValue, pair.second)},label = {Text(text="Goal ${index+1}", color = MaterialTheme.colorScheme.onBackground)})
                             Spacer(modifier = Modifier.width(8.dp))
-                            OutlinedTextField(modifier = Modifier.weight(1f),value = pair.second , onValueChange = {newValue -> viewModel.updateTextField(index , pair.first, newValue)},label = {Text(text="Money ${index+1}", color = MaterialTheme.colorScheme.onBackground)})
+                            OutlinedTextField(modifier = Modifier.weight(1f),keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),value = pair.second , onValueChange = {newValue -> viewModel.updateTextField(index , pair.first, newValue)},label = {Text(text="Money ${index+1}", color = MaterialTheme.colorScheme.onBackground)})
                             IconButton(onClick = { viewModel.deleteTextField(index) }) {
                                 Icon(imageVector = Icons.Default.Clear, contentDescription = null, tint = MaterialTheme.colorScheme.surfaceTint)
                             }
