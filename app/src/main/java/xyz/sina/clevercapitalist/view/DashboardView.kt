@@ -1,5 +1,6 @@
 package xyz.sina.clevercapitalist.view
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -189,7 +189,7 @@ fun UserUI(
                 }
 
                 Row(modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(8.dp)
                     .clickable { monthlyVisibleTab = !monthlyVisibleTab }){
                     Icon(modifier = Modifier.padding(start = 16.dp),imageVector = if(monthlyVisibleTab) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown, contentDescription = null)
@@ -215,13 +215,12 @@ fun UserUI(
                                     Text(text = "Mortgage")
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
-                                        .padding(8.dp)
                                         .background(
                                             color = MaterialTheme.colorScheme.primary,
                                             shape = RoundedCornerShape(8.dp)
-                                        ),text = "$$houseRent", color = MaterialTheme.colorScheme.onPrimary)
+                                        ).padding(2.dp),text = "$$houseRent", color = MaterialTheme.colorScheme.onPrimary)
                                 }
-                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = houseRent ,color = MaterialTheme.colorScheme.secondary)
+
                             }
                         }
                         Row(modifier = Modifier
@@ -233,13 +232,12 @@ fun UserUI(
                                     Text(text = "transport")
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
-                                        .padding(8.dp)
                                         .background(
                                             color = MaterialTheme.colorScheme.primary,
                                             shape = RoundedCornerShape(8.dp)
-                                        ),text = "$$transport", color = MaterialTheme.colorScheme.onPrimary)
+                                        ).padding(2.dp),text = "$$transport", color = MaterialTheme.colorScheme.onPrimary)
                                 }
-                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = transport,color = MaterialTheme.colorScheme.secondary)
+
                             }
                         }
                         Row(modifier = Modifier
@@ -251,13 +249,11 @@ fun UserUI(
                                     Text(text = "debts")
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
-                                        .padding(8.dp)
                                         .background(
                                             color = MaterialTheme.colorScheme.primary,
                                             shape = RoundedCornerShape(8.dp)
-                                        ),text = "$$debts", color = MaterialTheme.colorScheme.onPrimary)
+                                        ).padding(2.dp),text = "$$debts", color = MaterialTheme.colorScheme.onPrimary)
                                 }
-                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = debts, color = MaterialTheme.colorScheme.secondary)
                             }
                         }
                         Row(modifier = Modifier
@@ -269,13 +265,11 @@ fun UserUI(
                                     Text(text = "Other Expenses")
                                     Spacer(modifier = Modifier.weight(1f))
                                     Text(modifier = Modifier
-                                        .padding(8.dp)
                                         .background(
                                             color = MaterialTheme.colorScheme.primary,
                                             shape = RoundedCornerShape(8.dp)
-                                        ),text = "$$otherExpenses", color = MaterialTheme.colorScheme.onPrimary)
+                                        ).padding(2.dp),text = "$$otherExpenses", color = MaterialTheme.colorScheme.onPrimary)
                                 }
-                                LinearProgressIndicator(modifier = Modifier.fillMaxWidth(),progress = otherExpenses,color = MaterialTheme.colorScheme.secondary)
                             }
                         }
                     }
@@ -300,24 +294,23 @@ fun UserUI(
                     } + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(initialAlpha = 0.3f),
                     exit = slideOutVertically ()  + shrinkVertically() + fadeOut()
                 ) {
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)){
-                        Column (modifier = Modifier.padding(start = 20.dp,end = 20.dp)){
-                            goalPairs.forEachIndexed { _, pair ->
-                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
-                                    Text(color = MaterialTheme.colorScheme.onBackground,text = pair.goal)
-                                    Spacer(modifier = Modifier.weight(1f))
-                                    Text(modifier = Modifier
-                                        .padding(8.dp)
-                                        .background(
-                                            color = MaterialTheme.colorScheme.primary,
-                                            shape = RoundedCornerShape(8.dp)
-                                        ),color = MaterialTheme.colorScheme.onPrimary,text = "$ ${pair.moneyForGoal}")
-                                }
-                                LinearProgressIndicator(progress = pair.assignedMoney.toFloat() / pair.moneyForGoal.toFloat(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceBright)
+                        .padding(8.dp)){
+                        goalPairs.forEachIndexed { _, pair ->
+                            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+                                Text(color = MaterialTheme.colorScheme.onBackground,text = pair.goal)
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(modifier = Modifier
+                                    .background(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        shape = RoundedCornerShape(8.dp)
+                                    )
+                                    .padding(2.dp),color = MaterialTheme.colorScheme.onPrimary,text = "$ ${pair.moneyForGoal}")
                             }
 
+                            LinearProgressIndicator(progress = pair.assignedMoney.toFloat() / pair.moneyForGoal.toFloat(), color = MaterialTheme.colorScheme.secondary)
                         }
                     }
                 }
@@ -337,7 +330,7 @@ fun UserUI(
                 isAnimationEnable = true,
                 showSliceLabels = true,
                 animationDuration = 1500,
-                backgroundColor = Color.Transparent,
+                backgroundColor = MaterialTheme.colorScheme.surfaceBright,
                 sliceLabelTextColor = Color.Blue
             )
 
@@ -356,56 +349,51 @@ fun UserUI(
                     } + expandVertically(expandFrom = Alignment.Bottom) + fadeIn(initialAlpha = 0.3f),
                     exit = slideOutVertically ()  + shrinkVertically() + fadeOut()
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding) ,contentAlignment = Alignment.Center){
-                            Column(){
-                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
-                                    Box(modifier = Modifier
-                                        .width(30.dp)
-                                        .height(30.dp)
-                                        .background(Color(251, 97, 7)))
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceBright)
+                        .padding(8.dp)){
+                        Column(){
+                            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+                                Box(modifier = Modifier
+                                    .width(30.dp)
+                                    .height(30.dp)
+                                    .background(Color(251, 97, 7)))
 
-                                    Text(modifier = Modifier.weight(1f), text = "Debts")
-                                    Box(modifier = Modifier
-                                        .width(30.dp)
-                                        .height(30.dp)
-                                        .background(Color(243, 222, 44)))
+                                Text(modifier = Modifier.weight(1f), text = "Debts")
+                                Box(modifier = Modifier
+                                    .width(30.dp)
+                                    .height(30.dp)
+                                    .background(Color(243, 222, 44)))
 
-                                    Text(modifier = Modifier.weight(1f), text = "Transport")
-                                    Box(modifier = Modifier
-                                        .width(30.dp)
-                                        .height(30.dp)
-                                        .background(Color(124, 181, 24)))
-                                    Text(modifier = Modifier.weight(1f), text = "House rent")
-                                }
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
-                                    Box(modifier = Modifier
-                                        .width(30.dp)
-                                        .height(30.dp)
-                                        .background(Color(92, 128, 1)))
-
-                                    Text(modifier = Modifier.weight(1f),text = "Other expenses")
-                                    Box(modifier = Modifier
-                                        .width(30.dp)
-                                        .height(30.dp)
-                                        .background(Color(251, 176, 45)))
-
-                                    Text(modifier = Modifier.weight(1f), text = "Left over")
-
-                                }
+                                Text(modifier = Modifier.weight(1f), text = "Transport")
+                                Box(modifier = Modifier
+                                    .width(30.dp)
+                                    .height(30.dp)
+                                    .background(Color(124, 181, 24)))
+                                Text(modifier = Modifier.weight(1f), text = "House rent")
                             }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically){
+                                Box(modifier = Modifier
+                                    .width(30.dp)
+                                    .height(30.dp)
+                                    .background(Color(92, 128, 1)))
 
+                                Text(modifier = Modifier.weight(1f),text = "Other expenses")
+                                Box(modifier = Modifier
+                                    .width(30.dp)
+                                    .height(30.dp)
+                                    .background(Color(251, 176, 45)))
+
+                                Text(modifier = Modifier.weight(1f), text = "Left over")
+
+                            }
                         }
-                        Box(modifier = Modifier.fillMaxWidth() ,contentAlignment = Alignment.Center){
-                            PieChart(modifier = Modifier
-                                .width(400.dp)
-                                .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
-                        }
+                        PieChart(modifier = Modifier
+                            .width(400.dp)
+                            .height(400.dp), pieChartData = pieChartData , pieChartConfig = pieChartConfig )
                     }
-
                 }
             }
         }
