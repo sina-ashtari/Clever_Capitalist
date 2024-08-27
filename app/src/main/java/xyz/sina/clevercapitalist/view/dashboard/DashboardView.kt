@@ -1,6 +1,5 @@
-package xyz.sina.clevercapitalist.view
+package xyz.sina.clevercapitalist.view.dashboard
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -74,7 +73,8 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import xyz.sina.clevercapitalist.model.FinancialGoals
 import xyz.sina.clevercapitalist.model.RegisterInfo
-import xyz.sina.clevercapitalist.viewModel.DashboardViewModel
+import xyz.sina.clevercapitalist.view.Routes
+import xyz.sina.clevercapitalist.viewModel.dashboard.DashboardViewModel
 import xyz.sina.clevercapitalist.viewModel.RealmViewModel.RealmViewModel
 
 @Composable

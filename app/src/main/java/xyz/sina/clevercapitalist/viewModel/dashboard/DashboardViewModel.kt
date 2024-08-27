@@ -1,4 +1,4 @@
-package xyz.sina.clevercapitalist.viewModel
+package xyz.sina.clevercapitalist.viewModel.dashboard
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
